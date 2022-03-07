@@ -175,6 +175,7 @@ distMode = dist => withThis(
   ))
 )
 
+mode(data) // result 74
 distMode(distFreq(data)) // 73.8
 
 /*---------------------------------------------------------------------------------------*/
@@ -216,14 +217,13 @@ fractile = (parts, nth, array) => withThis(
 fractile(4, 1, data) // 1st le is 71
 fractile(10, 3, data) // 3rd Decile is 71.3
 fractile(100, 82, data) // 82nd Percentile is 75.62
-
 /*---------------------------------------------------------------------------------------*/
 
-distFractile = (parts, num, distCum) => withThis(
-  distCum.reduce(
+distFractile = (parts, num, dist) => withThis(
+  distCumulative(dist).reduce(
     (acc, inc) => inc.cumA > acc.cumA ? inc : acc
   ), tail => withThis(
-    distCum.find(
+    distCumulative(dist).find(
       i => i.cumA >= (num / parts * tail.cumA)
     ), qClass =>
       (qClass.bot - 0.5) + (
@@ -235,11 +235,10 @@ distFractile = (parts, num, distCum) => withThis(
   )
 )
 
-distFractile(4, 1, distCumulative(distFreq(data))) // 1st Quartile is 70.75
-distFractile(4, 2, distCumulative(distFreq(data))) // 2nd Quartile is 73.25
-distFractile(10, 5, distCumulative(distFreq(data))) // 5th Decile is 73.25
-distFractile(100, 50, distCumulative(distFreq(data))) // 50th Percentile is 73.25
-
+distFractile(4, 1, distFreq(data)) // 1st Quartile is 70.75
+distFractile(4, 2, distFreq(data)) // 2nd Quartile is 73.25
+distFractile(10, 5, distFreq(data)) // 5th Decile is 73.25
+distFractile(100, 50, distFreq(data)) // 50th Percentile is 73.25
 /*---------------------------------------------------------------------------------------*/
 
 meanGeometric = array =>
@@ -360,9 +359,9 @@ skewBow(
 ) // get 0
 
 skewBow(
-  distFractile(4, 1, distCumulative(distFreq(data))),
-  distFractile(4, 2, distCumulative(distFreq(data))),
-  distFractile(4, 3, distCumulative(distFreq(data))),
+  distFractile(4, 1, distFreq(data)),
+  distFractile(4, 2, distFreq(data)),
+  distFractile(4, 3, distFreq(data)),
 ) // get -0.0358
 /*---------------------------------------------------------------------------------------*/
 
@@ -422,10 +421,10 @@ arr1 = [
 ] // get [71, 75, 68.1, 78.9]
 
 arr2 = [
-  distFractile(4, 1, distCumulative(distFreq(data))),
-  distFractile(4, 3, distCumulative(distFreq(data))),
-  distFractile(100, 10, distCumulative(distFreq(data))),
-  distFractile(100, 90, distCumulative(distFreq(data)))
+  distFractile(4, 1, distFreq(data)),
+  distFractile(4, 3, distFreq(data)),
+  distFractile(100, 10, distFreq(data)),
+  distFractile(100, 90, distFreq(data))
 ] // get [70.75, 75.57, 68, 78]
 
 kurtPer(...arr1) // get 0.1852
