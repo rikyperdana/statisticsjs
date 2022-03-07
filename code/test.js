@@ -130,23 +130,24 @@ distMean = dist => add(dist.map(
   )) * i.fre
 )) / add(dist.map(get('fre')))
 
-distMean(distFreq(data)) // 73.125
+distMean(distFreq(data)) // result 73.125
 
 /*---------------------------------------------------------------------------------------*/
 
 distMedian = dist => withThis(
-  dist[dist.length - 1].cumA,
-  length => withThis(
-    dist.find(i => i.cumA >= length / 2),
-    medClass => (medClass.bot - 0.5) + (
-      (length/2 - dist.find(
-        i => i.top === medClass.bot - 1
-      ).cumA) / medClass.fre
-    ) * (medClass.top - medClass.bot + 1)
+  distCumulative(dist), cumul => withThis(
+    dist[dist.length - 1].cumA, length => withThis(
+      dist.find(i => i.cumA >= length / 2),
+      medClass => (medClass.bot - 0.5) + (
+        (length/2 - cumul.find(
+          i => i.top === medClass.bot - 1
+        ).cumA) / medClass.fre
+      ) * (medClass.top - medClass.bot + 1)
+    )
   )
 )
 
-distMedian(distCumulative(distFreq(data))) // 73.25
+distMedian(distFreq(data)) // result 73.25
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -341,7 +342,7 @@ skewMed = array =>
   * 3 / stanDev(variance(array))
 
 distSkewMed = dist =>
-  (distMean(dist) - distMedian(distCumulative(dist)))
+  (distMean(dist) - distMedian(dist))
   * 3 / stanDev(distVariance(dist))
 
 skewMed(data) // get 0.0622
@@ -456,6 +457,6 @@ variation(
 variation(iQR(data), median(data)) // result 5.4794
 variation(
   distIQR(distFreq(data)),
-  distMedian(distCumulative(distFreq(data)))
+  distMedian(distFreq(data))
 ) // result 6.58965
 /*---------------------------------------------------------------------------------------*/
