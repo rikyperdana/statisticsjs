@@ -312,10 +312,12 @@ distVariance(distFreq(data)) // get 13.359375
 
 /*---------------------------------------------------------------------------------------*/
 
-stanDev = pow(1/2)
+stanDev = arr => pow(1/2)(variance(arr))
+distStanDev = dist => pow(1/2)(distVariance(dist))
 
-stanDev(variance(data)) // get 3.6151
-stanDev(distVariance(distFreq(data))) // get 3.6550
+stanDev(data) // get 3.6151
+distStanDev(distFreq(data)) // get 3.6550
+
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -332,11 +334,13 @@ distIQR(distFreq(data)) // get 4.8269
 
 skewMod = array =>
   (mean(array) - mode(array)) /
-  stanDev(variance(array)),
+  // stanDev(variance(array)),
+  stanDev(array)
 
 distSkewMod = dist =>
   (distMean(dist) - distMode(dist)) /
-  stanDev(distVariance(dist))
+  // stanDev(distVariance(dist))
+  distStanDev(dist)
 
 skewMod(data) // get -0.2558
 distSkewMod(distFreq(data)) // get -0.1846
@@ -345,11 +349,13 @@ distSkewMod(distFreq(data)) // get -0.1846
 
 skewMed = array =>
   (mean(array) - median(array))
-  * 3 / stanDev(variance(array))
+  // * 3 / stanDev(variance(array))
+  * 3 / stanDev(array)
 
 distSkewMed = dist =>
   (distMean(dist) - distMedian(dist))
-  * 3 / stanDev(distVariance(dist))
+  // * 3 / stanDev(distVariance(dist))
+  * 3 / distStanDev(dist)
 
 skewMed(data) // get 0.0622
 distSkewMed(distFreq(data)) // get -0.1025
@@ -379,7 +385,8 @@ skewMom = array => withThis(
     array.map(i => i - meanVal)
     .map(Math.abs).map(pow(3))
   ) / array.length
-  / pow(3)(stanDev(variance(array)))
+  // / pow(3)(stanDev(variance(array)))
+  / pow(3)(stanDev(array))
 )
 
 distSkewMom = dist => withThis(
@@ -391,7 +398,8 @@ distSkewMom = dist => withThis(
       midVal(i) - meanVal
     ))
   ) / distLength(dist)
-  / pow(3)(stanDev(distVariance(dist)))
+  // / pow(3)(stanDev(distVariance(dist)))
+  / pow(3)(distStanDev(dist))
 )
 
 skewMom(data) // get 1.6715
@@ -404,7 +412,8 @@ kurtMom = array => withThis(
     array.map(i => i - meanVal)
     .map(Math.abs).map(pow(4))
   ) / array.length
-  / pow(4)(stanDev(variance(array)))
+  // / pow(4)(stanDev(variance(array)))
+  / pow(4)(stanDev(array))
 )
 
 distKurtMom = dist => withThis(
@@ -416,7 +425,8 @@ distKurtMom = dist => withThis(
       midVal(i) - meanVal
     ))
   ) / distLength(dist)
-  / pow(4)(stanDev(distVariance(dist)))
+  // / pow(4)(stanDev(distVariance(dist)))
+  / pow(4)(distStanDev(dist))
 )
 
 kurtMom(data) // get 3.1558
@@ -447,21 +457,25 @@ kurtPer(...arr2) // get 0.2413
 /*---------------------------------------------------------------------------------------*/
 
 zConvert = array => withThis(
-  {m: mean(array), sd: stanDev(variance(array))},
+  // {m: mean(array), sd: stanDev(variance(array))},
+  {m: mean(array), sd: stanDev(array)},
   ({m, sd}) => array.map(i => (i - m) / sd)
 )
 
 zConvert([5, 4, 8, 7, 1]) // get [0, -0.365, 1.095, 0.73, -1.46]
+zConvert([5000, 4000, 8000, 7000, 1000]) // get the same result as above
 
 /*---------------------------------------------------------------------------------------*/
 
 variation = (a, b) => a / b * 100
 
 variation(
-  stanDev(variance(data)), mean(data)
+  // stanDev(variance(data)), mean(data)
+  stanDev(data), mean(data)
 ) // result 4.9471899
 variation(
-  stanDev(distVariance(distFreq(data))),
+  // stanDev(distVariance(distFreq(data))),
+  distStanDev(distFreq(data)),
   distMean(distFreq(data))
 ) // result 4.9983
 variation(range(data), mean(data)) // result 23.263
