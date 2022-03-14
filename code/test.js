@@ -217,6 +217,7 @@ fractile = (parts, nth, array) => withThis(
 fractile(4, 1, data) // 1st le is 71
 fractile(10, 3, data) // 3rd Decile is 71.3
 fractile(100, 82, data) // 82nd Percentile is 75.62
+
 /*---------------------------------------------------------------------------------------*/
 
 distFractile = (parts, num, dist) => withThis(
@@ -239,6 +240,7 @@ distFractile(4, 1, distFreq(data)) // 1st Quartile is 70.75
 distFractile(4, 2, distFreq(data)) // 2nd Quartile is 73.25
 distFractile(10, 5, distFreq(data)) // 5th Decile is 73.25
 distFractile(100, 50, distFreq(data)) // 50th Percentile is 73.25
+
 /*---------------------------------------------------------------------------------------*/
 
 meanGeometric = array =>
@@ -293,6 +295,7 @@ variance = array => withThis(
 )
 
 variance(data) // get 13.069375
+
 /*---------------------------------------------------------------------------------------*/
 
 distVariance = dist => withThis(
@@ -306,12 +309,14 @@ distVariance = dist => withThis(
 )
 
 distVariance(distFreq(data)) // get 13.359375
+
 /*---------------------------------------------------------------------------------------*/
 
 stanDev = pow(1/2)
 
 stanDev(variance(data)) // get 3.6151
 stanDev(distVariance(distFreq(data))) // get 3.6550
+
 /*---------------------------------------------------------------------------------------*/
 
 iQR = array => fractile(4, 3, array) - fractile(4, 1, array),
@@ -322,6 +327,7 @@ distIQR = dist =>
 
 iQR(data) // get 4
 distIQR(distFreq(data)) // get 4.8269
+
 /*---------------------------------------------------------------------------------------*/
 
 skewMod = array =>
@@ -333,7 +339,8 @@ distSkewMod = dist =>
   stanDev(distVariance(dist))
 
 skewMod(data) // get -0.2558
-distSkewMod(distFreq(data)) // get 0.1846
+distSkewMod(distFreq(data)) // get -0.1846
+
 /*---------------------------------------------------------------------------------------*/
 
 skewMed = array =>
@@ -346,6 +353,7 @@ distSkewMed = dist =>
 
 skewMed(data) // get 0.0622
 distSkewMed(distFreq(data)) // get -0.1025
+
 /*---------------------------------------------------------------------------------------*/
 
 skewBow = (first, second, third) =>
@@ -363,6 +371,7 @@ skewBow(
   distFractile(4, 2, distFreq(data)),
   distFractile(4, 3, distFreq(data)),
 ) // get -0.0358
+
 /*---------------------------------------------------------------------------------------*/
 
 skewMom = array => withThis(
@@ -384,6 +393,10 @@ distSkewMom = dist => withThis(
   ) / distLength(dist)
   / pow(3)(stanDev(distVariance(dist)))
 )
+
+skewMom(data) // get 1.6715
+distSkewMom(distFreq(data)) // get 0.0013
+
 /*---------------------------------------------------------------------------------------*/
 
 kurtMom = array => withThis(
@@ -408,6 +421,7 @@ distKurtMom = dist => withThis(
 
 kurtMom(data) // get 3.1558
 distKurtMom(distFreq(data)) // get 2.7454
+
 /*---------------------------------------------------------------------------------------*/
 
 kurtPer = (q1, q3, p10, p90) =>
@@ -429,6 +443,7 @@ arr2 = [
 
 kurtPer(...arr1) // get 0.1852
 kurtPer(...arr2) // get 0.2413
+
 /*---------------------------------------------------------------------------------------*/
 
 zConvert = array => withThis(
@@ -437,6 +452,7 @@ zConvert = array => withThis(
 )
 
 zConvert([5, 4, 8, 7, 1]) // get [0, -0.365, 1.095, 0.73, -1.46]
+
 /*---------------------------------------------------------------------------------------*/
 
 variation = (a, b) => a / b * 100
@@ -458,4 +474,5 @@ variation(
   distIQR(distFreq(data)),
   distMedian(distFreq(data))
 ) // result 6.58965
+
 /*---------------------------------------------------------------------------------------*/
