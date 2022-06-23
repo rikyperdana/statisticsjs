@@ -490,3 +490,15 @@ variation(
 ) // result 6.58965
 
 /*---------------------------------------------------------------------------------------*/
+
+pivots = array => _.chunk(array, array.length/2).map(mean)
+trend = array => (pivots(array)[1] - pivots(array)[0]) / (array.length/2)
+semiAvg = array => withThis(
+  pivots(array)[0], anchor => array.map(
+    (i, j) => anchor + (trend(array) * j -
+    array.findIndex(k => k === anchor)
+    )
+  )
+)
+
+semiAvg([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
