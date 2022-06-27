@@ -489,16 +489,41 @@ variation(
   distMedian(distFreq(data))
 ) // result 6.58965
 
-/*---------------------------------------------------------------------------------------*/
 
 pivots = array => _.chunk(array, array.length/2).map(mean)
 trend = array => (pivots(array)[1] - pivots(array)[0]) / (array.length/2)
 semiAvg = array => withThis(
   pivots(array)[0], anchor => array.map(
     (i, j) => anchor + (trend(array) * j -
-    array.findIndex(k => k === anchor)
+      array.findIndex(k => k === anchor)
     )
   )
 )
 
 semiAvg([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+semiAvgN = (array, next = 0) => withThis(
+  pivots(array)[0], anchor =>
+    makeArray(array.length + next).map(
+      (i, j) => anchor + (trend(array) * j -
+        array.findIndex(k => k === anchor)
+      )
+    )
+)
+
+semiAvgN([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+
+/*---------------------------------------------------------------------------------------*/
+
+mathTrend = arr => withThis([
+  [add(arr)                   , arr.length               , add(arr.map((i, j) => j))  ],
+  [add(arr.map((i, j) => i*j)), add(arr.map((i, j) => j)), add(arr.map((i, j) => j*j))]
+], list => withThis(list.sort((a, b) => a[1] - b[1]), sorted => withThis(
+  [sorted[0].map(i => i * sorted[1][1] / sorted[0][1]), sorted[1]], equal => withThis(
+    makeArray(3).map((i, j) => equal[0][j] - equal[1][j]), remainder => withThis(
+      remainder[0] / remainder[2], bVal => withThis(
+        (sorted[0][0] - sorted[0][2] * bVal) /sorted[0][1], aVal => [aVal, bVal]
+      )
+    )
+  )
+)))
