@@ -561,3 +561,33 @@ mathTrend([170, 190, 225, 250, 325]) // get [158, 37]
 mathTrendPred([170, 190, 225, 250, 325], 5) // get [158, 195, 232, 269, 306]
 
 /*---------------------------------------------------------------------------------------*/
+
+parabolicTrend = array => withThis(middleIndex(array.length), index =>
+  withThis({
+    sigY: add(array),
+    sigXY: add(index.map((i, j) => i * array[j])),
+    sigX2Y: add(index.map((i, j) => array[j] * i * i)),
+    sigX2: add(index.map(pow(2))),
+    sigX4: add(index.map(pow(4)))
+  }, ({sigY, sigXY, sigX2Y, sigX2, sigX4}) => withThis({
+    a: (sigY*sigX4 - sigX2Y*sigX2) / (array.length*sigX4 - pow(2)(sigX2)),
+    b: sigXY / sigX2,
+    c: (array.length*sigX2Y - sigX2*sigY) / (array.length*sigX4 - pow(2)(sigX2))
+  }, ({a, b, c}) => [a, b, c]))
+)
+
+parabolicTrend([12, 16, 19, 21, 22]) // get [19, 2.5, -0.5]
+
+parabolicTrendPred = (array, next) => withThis({
+  index: middleIndex(array.length),
+  equation: parabolicTrend(array)
+}, ({index, equation}) => [
+  ...index.map(i => equation[0] + equation[1]*i + equation[2]*i*i),
+  ...makeArray(next).map(i =>
+    equation[0] +
+    equation[1] * (1+i+_.last(index)) +
+    equation[2] * pow(2)(1+i+_.last(index))
+  )
+])
+
+parabolicTrendPred([12, 16, 19, 21, 22], 5) // get [12, 16, 19, 21, 22, 22, 21, 19, 16, 12]
