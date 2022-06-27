@@ -489,6 +489,7 @@ variation(
   distMedian(distFreq(data))
 ) // result 6.58965
 
+/*---------------------------------------------------------------------------------------*/
 
 pivots = array => _.chunk(array, array.length/2).map(mean)
 trend = array => (pivots(array)[1] - pivots(array)[0]) / (array.length/2)
@@ -515,6 +516,25 @@ semiAvgN([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 
 
 /*---------------------------------------------------------------------------------------*/
 
+middleIndex = length => makeArray(length).map((i, j) => j + 1 - Math.round(length/2))
+
+leastSquareEqu = array => withThis(middleIndex(array.length), index => [
+  mean(array), add(array.map((i, j) => i * index[j])) / add(index.map(pow(2)))
+])
+
+leastSquarePred = (array, next) => withThis({
+  index: middleIndex(array.length),
+  equation: leastSquareEqu(array)
+}, ({index, equation}) => [
+  ...index.map(i => equation[0] + equation[1] * i),
+  ...makeArray(next).map(i => equation[0] + equation[1]*(_.last(index)+i+1))
+])
+
+leastSquareEqu([170, 190, 225, 250, 325]) // get [232, 37]
+leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 343, 380, 417]
+
+/*---------------------------------------------------------------------------------------*/
+
 mathTrend = arr => withThis([
   [add(arr)                   , arr.length               , add(arr.map((i, j) => j))  ],
   [add(arr.map((i, j) => i*j)), add(arr.map((i, j) => j)), add(arr.map((i, j) => j*j))]
@@ -533,3 +553,11 @@ mathTrendPartial = (array, parts) => mathTrend(array).map(i => i / parts)
 mathTrendPred = (array, periods) => withThis(mathTrend(array), formula =>
   makeArray(periods).map(i => formula[0] + formula[1] * i)
 )
+
+mathTrend([1, 2, 3, 4, 5]) // get [1, 1]
+mathTrendPred([1, 2, 3, 4, 5], 10) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+mathTrend([170, 190, 225, 250, 325]) // get [158, 37]
+mathTrendPred([170, 190, 225, 250, 325], 5) // get [158, 195, 232, 269, 306]
+
+/*---------------------------------------------------------------------------------------*/
