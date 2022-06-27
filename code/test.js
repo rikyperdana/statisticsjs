@@ -522,8 +522,14 @@ mathTrend = arr => withThis([
   [sorted[0].map(i => i * sorted[1][1] / sorted[0][1]), sorted[1]], equal => withThis(
     makeArray(3).map((i, j) => equal[0][j] - equal[1][j]), remainder => withThis(
       remainder[0] / remainder[2], bVal => withThis(
-        (sorted[0][0] - sorted[0][2] * bVal) /sorted[0][1], aVal => [aVal, bVal]
+        (sorted[0][0] - sorted[0][2] * bVal) / sorted[0][1], aVal => [aVal, bVal]
       )
     )
   )
 )))
+
+mathTrendPartial = (array, parts) => mathTrend(array).map(i => i / parts)
+
+mathTrendPred = (array, periods) => withThis(mathTrend(array), formula =>
+  makeArray(periods).map(i => formula[0] + formula[1] * i)
+)
