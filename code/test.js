@@ -536,17 +536,35 @@ leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 3
 /*---------------------------------------------------------------------------------------*/
 
 mathTrend = arr => withThis([
-  [add(arr)                   , arr.length               , add(arr.map((i, j) => j))  ],
-  [add(arr.map((i, j) => i*j)), add(arr.map((i, j) => j)), add(arr.map((i, j) => j*j))]
-], list => withThis(list.sort((a, b) => a[1] - b[1]), sorted => withThis(
-  [sorted[0].map(i => i * sorted[1][1] / sorted[0][1]), sorted[1]], equal => withThis(
-    makeArray(3).map((i, j) => equal[0][j] - equal[1][j]), remainder => withThis(
-      remainder[0] / remainder[2], bVal => withThis(
-        (sorted[0][0] - sorted[0][2] * bVal) / sorted[0][1], aVal => [aVal, bVal]
+  [
+    add(arr), arr.length,
+    add(arr.map((i, j) => j))
+  ], [
+    add(arr.map((i, j) => i*j)),
+    add(arr.map((i, j) => j)),
+    add(arr.map((i, j) => j*j))
+  ]
+], list =>
+  withThis(list.sort(
+    (a, b) => a[1] - b[1]
+  ), sorted =>
+    withThis([sorted[0].map(
+      i => i * sorted[1][1] / sorted[0][1]
+    ), sorted[1]], equal =>
+      withThis(makeArray(3).map(
+        (i, j) => equal[0][j] - equal[1][j]
+      ), remainder =>
+        withThis(remainder[0] / remainder[2], bVal =>
+          withThis((
+            sorted[0][0] - sorted[0][2] * bVal
+          ) / sorted[0][1], aVal =>
+            [aVal, bVal]
+          )
+        )
       )
     )
   )
-)))
+)
 
 mathTrendPartial = (array, parts) => mathTrend(array).map(i => i / parts)
 
@@ -565,7 +583,7 @@ mathTrendPred([170, 190, 225, 250, 325], 5) // get [158, 195, 232, 269, 306]
 parabolicTrend = array => withThis(
   middleIndex(array.length), index => withThis({
     sigY: add(array),
-    sigXY: add(index.map((i, j) => i * array[j])),
+    sigXY: add(index.map((i, j) => array[j] * i)),
     sigX2Y: add(index.map((i, j) => array[j] * i * i)),
     sigX2: add(index.map(pow(2))),
     sigX4: add(index.map(pow(4)))
