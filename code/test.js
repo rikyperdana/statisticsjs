@@ -516,7 +516,13 @@ semiAvgN([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 
 
 /*---------------------------------------------------------------------------------------*/
 
-middleIndex = length => makeArray(length).map((i, j) => j + 1 - Math.round(length/2))
+isEven = num => num % 2 === 0
+
+middleIndex = length => !isEven(length) ?
+makeArray(length).map((i, j) => j + 1 - Math.round(length / 2)) : [
+  ...makeArray(length/2).reduce((res, inc) => [-1 + (-2*inc), ...res], []),
+  ...makeArray(length/2).reduce((res, inc) => [...res, 1 + (2 * inc)], [])
+]
 
 leastSquareEqu = array => withThis(middleIndex(array.length), index => [
   mean(array), add(array.map((i, j) => i * index[j])) / add(index.map(pow(2)))
@@ -536,28 +542,14 @@ leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 3
 /*---------------------------------------------------------------------------------------*/
 
 mathTrend = arr => withThis([
-  [
-    add(arr), arr.length,
-    add(arr.map((i, j) => j))
-  ], [
-    add(arr.map((i, j) => i*j)),
-    add(arr.map((i, j) => j)),
-    add(arr.map((i, j) => j*j))
-  ]
+  [add(arr), arr.length, add(arr.map((i, j) => j))],
+  [add(arr.map((i, j) => i*j)), add(arr.map((i, j) => j)), add(arr.map((i, j) => j*j))]
 ], list =>
-  withThis(list.sort(
-    (a, b) => a[1] - b[1]
-  ), sorted =>
-    withThis([sorted[0].map(
-      i => i * sorted[1][1] / sorted[0][1]
-    ), sorted[1]], equal =>
-      withThis(makeArray(3).map(
-        (i, j) => equal[0][j] - equal[1][j]
-      ), remainder =>
+  withThis(list.sort((a, b) => a[1] - b[1]), sorted =>
+    withThis([sorted[0].map(i => i * sorted[1][1] / sorted[0][1]), sorted[1]], equal =>
+      withThis(makeArray(3).map((i, j) => equal[0][j] - equal[1][j]), remainder =>
         withThis(remainder[0] / remainder[2], bVal =>
-          withThis((
-            sorted[0][0] - sorted[0][2] * bVal
-          ) / sorted[0][1], aVal =>
+          withThis((sorted[0][0] - sorted[0][2] * bVal) / sorted[0][1], aVal =>
             [aVal, bVal]
           )
         )
@@ -616,3 +608,18 @@ parabolicTrendPred = (array, next) => withThis({
 
 parabolicTrendPred([12, 16, 19, 21, 22], 5)
 // get [12, 16, 19, 21, 22, 22, 21, 19, 16, 12]
+
+/*---------------------------------------------------------------------------------------*/
+
+cycleTrend = arrays => withThis(
+  makeArray(arrays[0].length)
+  .map(i => add(arrays.map(j => j[i]))),
+  sums => sums.map(i => i / mean(sums))
+)
+
+cycleTrend([
+  [2, 3, 3, 4],
+  [3, 4, 4, 6],
+  [4, 4, 3, 5],
+  [4, 5, 5, 7]
+]) // get [0.7878, 0.9696, 0.9090, 1.3333]
