@@ -611,6 +611,20 @@ parabolicTrendPred([12, 16, 19, 21, 22], 5)
 
 /*---------------------------------------------------------------------------------------*/
 
+euler = 2.718281828459045
+
+expoTrend = arr => withThis(middleIndex(arr.length), index => [
+  pow(add(arr.map(Math.log)) / arr.length)(euler),
+  pow(
+    add(index.map((i, j) => i * Math.log(arr[j]))) /
+    add(index.map(pow(2)))
+  )(euler) - 1
+])
+
+expoTrend([9, 13, 18, 25, 30]) // get [17.3661, 0.3582]
+
+/*---------------------------------------------------------------------------------------*/
+
 cycleTrend = arrays => withThis(
   makeArray(arrays[0].length)
   .map(i => add(arrays.map(j => j[i]))),
