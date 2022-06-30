@@ -637,3 +637,38 @@ cycleTrend([
   [4, 4, 3, 5],
   [4, 5, 5, 7]
 ]) // get [0.7878, 0.9696, 0.9090, 1.3333]
+
+/*---------------------------------------------------------------------------------------*/
+
+ratioTrend = arrays => withThis(
+  middleIndex(arrays.length), index => [
+    add(arrays.map(add)) / arrays.length,
+    add(index.map((i, j) => i * add(arrays[j]))) /
+    add(index.map(pow(2)))
+  ]
+)
+
+ratioTrend([
+  [2, 3, 3, 4],
+  [3, 4, 4, 6],
+  [4, 4, 3, 5],
+  [4, 5, 5, 7]
+]) // get [16.5, 1.3] yearly prediction
+
+ratioTrendPred = arrays => withThis(ratioTrend(arrays), trend =>
+  _.chunk(middleIndex(arrays.length * arrays[0].length).map(i =>
+    (trend[0]/4) + (trend[1] / 16 * i)
+  ), 4)
+)
+
+ratioTrendPred([
+  [2, 3, 3, 4],
+  [3, 4, 4, 6],
+  [4, 4, 3, 5],
+  [4, 5, 5, 7]
+]) /* get quartile prediction result [
+  [2.90625, 3.06874, 3.23125, 3.39375],
+  [3.55625, 3.71875, 3.88125, 4.04375],
+  [4.20625, 4.36875, 4.53125, 4.69375],
+  [4.85625, 5.01875, 5.18125, 5.34375]
+] */
