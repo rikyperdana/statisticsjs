@@ -657,7 +657,7 @@ ratioTrend([
 
 ratioTrendPred = arrays => withThis(ratioTrend(arrays), trend =>
   _.chunk(middleIndex(arrays.length * arrays[0].length).map(i =>
-    (trend[0]/4) + (trend[1] / 16 * i)
+    (trend[0]/4) + (trend[1] / 16 * i) // split to quartile
   ), 4)
 )
 
@@ -672,3 +672,22 @@ ratioTrendPred([
   [4.20625, 4.36875, 4.53125, 4.69375],
   [4.85625, 5.01875, 5.18125, 5.34375]
 ] */
+
+ratioTrendPercentage = arrays => withThis(
+  _.flatten(ratioTrendPred(arrays)), pred =>
+    _.chunk(_.flatten(arrays).map(
+      (i, j) => i * 100 / pred[j]
+    ), 4)
+)
+
+ratioTrendPercentage([
+  [2, 3, 3, 4],
+  [3, 4, 4, 6],
+  [4, 4, 3, 5],
+  [4, 5, 5, 7]
+]) /* get the result [
+  [68.81, 97.75 , 92.84 , 117.86],
+  [84.35, 107.56, 103.05, 148.37],
+  [95.09, 91.55 , 66.20 , 106.52],
+  [82.36, 99.62 , 96.50 , 130.99]
+]*/
