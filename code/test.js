@@ -673,14 +673,14 @@ ratioTrendPred([
   [4.85625, 5.01875, 5.18125, 5.34375]
 ] */
 
-ratioTrendPercentage = arrays => withThis(
+ratioTrendDiff = arrays => withThis(
   _.flatten(ratioTrendPred(arrays)), pred =>
     _.chunk(_.flatten(arrays).map(
       (i, j) => i * 100 / pred[j]
     ), 4)
 )
 
-ratioTrendPercentage([
+ratioTrendDiff([
   [2, 3, 3, 4],
   [3, 4, 4, 6],
   [4, 4, 3, 5],
@@ -691,3 +691,16 @@ ratioTrendPercentage([
   [95.09, 91.55 , 66.20 , 106.52],
   [82.36, 99.62 , 96.50 , 130.99]
 ]*/
+
+ratioTrendSeason = arrays => withThis(ratioTrendDiff(arrays), diff =>
+  withThis(makeArray(4).map(i => mean(diff.map(j => j[i]))), averages =>
+    averages.map(i => i * 400 / add(averages))
+  )
+)
+
+ratioTrendSeason([
+  [2, 3, 3, 4],
+  [3, 4, 4, 6],
+  [4, 4, 3, 5],
+  [4, 5, 5, 7]
+]) // get [83.20, 99.78, 90.24, 126.77]
