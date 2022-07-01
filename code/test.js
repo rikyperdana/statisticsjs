@@ -756,12 +756,12 @@ corelationRank(
   [79, 80, 89, 65, 67, 62, 61, 68, 81, 84]
 ) // get 0.866
 
-chi2 = arr => withThis(
-  arr.map(i => i.map((k, l) =>
-    add(i) * add(arr.map(m => m[l]))
-    / add(_.flatten(arr))
+chi2 = arrays => withThis(
+  arrays.map(i => i.map((k, l) =>
+    add(i) * add(arrays.map(m => m[l]))
+    / add(_.flatten(arrays))
   )), pred => add(_.flatten(pred).map((n, o) =>
-    pow(2)(_.flatten(arr)[o] - n) / n
+    pow(2)(_.flatten(arrays)[o] - n) / n
   ))
 )
 
