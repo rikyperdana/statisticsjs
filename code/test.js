@@ -524,19 +524,24 @@ makeArray(length).map((i, j) => j + 1 - Math.round(length / 2)) : [
   ...makeArray(length/2).reduce((res, inc) => [...res, 1 + (2 * inc)], [])
 ]
 
-leastSquareEqu = array => withThis(middleIndex(array.length), index => [
-  mean(array), add(array.map((i, j) => i * index[j])) / add(index.map(pow(2)))
-])
+leastSquareEqu = array => withThis(
+  middleIndex(array.length), index => ({
+  a: mean(array),
+  b: add(array.map((i, j) => i * index[j]))
+    / add(index.map(pow(2)))
+}))
 
 leastSquarePred = (array, next) => withThis({
   index: middleIndex(array.length),
   equation: leastSquareEqu(array)
 }, ({index, equation}) => [
-  ...index.map(i => equation[0] + equation[1] * i),
-  ...makeArray(next).map(i => equation[0] + equation[1]*(_.last(index)+i+1))
+  ...index.map(i => equation.a + equation.b * i),
+  ...makeArray(next).map(i =>
+    equation.a + equation.b * (_.last(index)+i+1)
+  )
 ])
 
-leastSquareEqu([170, 190, 225, 250, 325]) // get [232, 37]
+leastSquareEqu([170, 190, 225, 250, 325]) // get {a: 232, b: 37}
 leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 343, 380, 417]
 
 /*---------------------------------------------------------------------------------------*/
@@ -550,7 +555,7 @@ mathTrend = arr => withThis([
       withThis(makeArray(3).map((i, j) => equal[0][j] - equal[1][j]), remainder =>
         withThis(remainder[0] / remainder[2], bVal =>
           withThis((sorted[0][0] - sorted[0][2] * bVal) / sorted[0][1], aVal =>
-            [aVal, bVal]
+            ({a: aVal, b: bVal})
           )
         )
       )
@@ -564,10 +569,10 @@ mathTrendPred = (array, periods) => withThis(mathTrend(array), formula =>
   makeArray(periods).map(i => formula[0] + formula[1] * i)
 )
 
-mathTrend([1, 2, 3, 4, 5]) // get [1, 1]
+mathTrend([1, 2, 3, 4, 5]) // get {a: 1, b: 1}
 mathTrendPred([1, 2, 3, 4, 5], 10) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-mathTrend([170, 190, 225, 250, 325]) // get [158, 37]
+mathTrend([170, 190, 225, 250, 325]) // get {a: 158, b: 37}
 mathTrendPred([170, 190, 225, 250, 325], 5) // get [158, 195, 232, 269, 306]
 
 /*---------------------------------------------------------------------------------------*/
@@ -579,30 +584,30 @@ parabolicTrend = array => withThis(
     sigX2Y: add(index.map((i, j) => array[j] * i * i)),
     sigX2: add(index.map(pow(2))),
     sigX4: add(index.map(pow(4)))
-  }, ({sigY, sigXY, sigX2Y, sigX2, sigX4}) => [
-    (sigY*sigX4 - sigX2Y*sigX2) /
-    (array.length*sigX4 - pow(2)(sigX2)),
-    sigXY / sigX2,
-    (array.length*sigX2Y - sigX2*sigY) /
-    (array.length*sigX4 - pow(2)(sigX2))
-  ])
+  }, ({sigY, sigXY, sigX2Y, sigX2, sigX4}) => ({
+    a: (sigY*sigX4 - sigX2Y*sigX2) /
+       (array.length*sigX4 - pow(2)(sigX2)),
+    b: sigXY / sigX2,
+    c: (array.length*sigX2Y - sigX2*sigY) /
+       (array.length*sigX4 - pow(2)(sigX2))
+  }))
 )
 
-parabolicTrend([12, 16, 19, 21, 22]) // get [19, 2.5, -0.5]
+parabolicTrend([12, 16, 19, 21, 22]) // get {a: 19, b: 2.5, c: -0.5}
 
 parabolicTrendPred = (array, next) => withThis({
   index: middleIndex(array.length),
   equation: parabolicTrend(array)
 }, ({index, equation}) => [
   ...index.map(i =>
-    equation[0] +
-    equation[1] * i +
-    equation[2] * i * i
+    equation.a +
+    equation.b * i +
+    equation.c * i * i
   ),
   ...makeArray(next).map(i =>
-    equation[0] +
-    equation[1] * (1 + i + _.last(index)) +
-    equation[2] * pow(2)(1 + i + _.last(index))
+    equation.a +
+    equation.b * (1 + i + _.last(index)) +
+    equation.c * pow(2)(1 + i + _.last(index))
   )
 ])
 
@@ -613,15 +618,15 @@ parabolicTrendPred([12, 16, 19, 21, 22], 5)
 
 euler = 2.718281828459045
 
-expoTrend = arr => withThis(middleIndex(arr.length), index => [
-  pow(add(arr.map(Math.log)) / arr.length)(euler),
-  pow(
+expoTrend = arr => withThis(middleIndex(arr.length), index => ({
+  a: pow(add(arr.map(Math.log)) / arr.length)(euler),
+  b: pow(
     add(index.map((i, j) => i * Math.log(arr[j]))) /
     add(index.map(pow(2)))
   )(euler) - 1
-])
+}))
 
-expoTrend([9, 13, 18, 25, 30]) // get [17.3661, 0.3582]
+expoTrend([9, 13, 18, 25, 30]) // get {a: 17.3661, b: 0.3582}
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -641,11 +646,11 @@ cycleTrend([
 /*---------------------------------------------------------------------------------------*/
 
 ratioTrend = arrays => withThis(
-  middleIndex(arrays.length), index => [
-    add(arrays.map(add)) / arrays.length,
-    add(index.map((i, j) => i * add(arrays[j]))) /
-    add(index.map(pow(2)))
-  ]
+  middleIndex(arrays.length), index => ({
+    a: add(arrays.map(add)) / arrays.length,
+    b: add(index.map((i, j) => i * add(arrays[j]))) /
+       add(index.map(pow(2)))
+  })
 )
 
 ratioTrend([
@@ -653,11 +658,11 @@ ratioTrend([
   [3, 4, 4, 6],
   [4, 4, 3, 5],
   [4, 5, 5, 7]
-]) // get [16.5, 1.3] yearly prediction
+]) // get ({a: 16.5, b: 1.3}) yearly prediction
 
 ratioTrendPred = arrays => withThis(ratioTrend(arrays), trend =>
   _.chunk(middleIndex(arrays.length * arrays[0].length).map(i =>
-    (trend[0]/4) + (trend[1] / 16 * i) // split to quartile
+    (trend.a/4) + (trend.b / 16 * i) // split to quartile
   ), 4)
 )
 
@@ -780,5 +785,4 @@ contingency([
   [77, 13, 27],
   [21, 32, 19]
 ]) // get 0.3759
-
 /*---------------------------------------------------------------------------------------*/
