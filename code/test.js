@@ -704,3 +704,54 @@ ratioTrendSeason([
   [4, 4, 3, 5],
   [4, 5, 5, 7]
 ]) // get [83.20, 99.78, 90.24, 126.77]
+
+/*---------------------------------------------------------------------------------------*/
+
+corelation = (x, y) => (
+  x.length * add(x.map((i, j) => i * y[j])) -
+  add(x) * add(y)
+) / pow(1/2)(
+  (
+    x.length * add(x.map(pow(2))) -
+    pow(2)(add(x))
+  ) * (
+    x.length * add(y.map(pow(2))) -
+    pow(2)(add(y))
+  )
+)
+
+corelation(
+  [3, 6, 9, 10, 13],
+  [12, 23, 24, 26, 28]
+) // get 0.9149
+
+determination = (x, y) => pow(2)(corelation(x, y))
+
+determination(
+  [3, 6, 9, 10, 13],
+  [12, 23, 24, 26, 28]
+) // get 0.8370
+
+/*---------------------------------------------------------------------------------------*/
+
+ranking = arr => withThis(sort([...arr]), sorted =>
+  arr.map(i => 1 + sorted.findIndex(j => j == i))
+)
+
+ranking([82, 75, 85, 70, 77, 60, 63, 66, 80, 89])
+// get [8, 5, 9, 4, 6, 1, 2, 3, 7, 10]
+
+ranking([79, 80, 89, 65, 67, 62, 61, 68, 81, 84])
+// get [6, 7, 10, 3, 4, 2, 1, 5, 8, 9]
+
+corelationRank = (x, y) => withThis(
+  makeArray(x.length).map(i =>
+    ranking(x)[i] - ranking(y)[i]
+  ), diff => 1 - (6 * add(diff.map(pow(2)))
+    / (pow(3)(x.length) - x.length))
+)
+
+corelationRank(
+  [82, 75, 85, 70, 77, 60, 63, 66, 80, 89],
+  [79, 80, 89, 65, 67, 62, 61, 68, 81, 84]
+) // get 0.866
