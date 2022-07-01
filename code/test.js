@@ -833,3 +833,18 @@ partialCorelation(
 ) // get -0.7587
 
 /*---------------------------------------------------------------------------------------*/
+
+regression = (x, y) => withThis({
+  x2: add(x.map(pow(2))),
+  xy: add(x.map((i, j) => i * y[j]))
+}, ({x2, xy}) => ({
+  a: (add(y) * x2 - add(x) * xy) /
+     (x.length * x2 - pow(2)(add(x))),
+  b: (x.length * xy - add(x) * add(y)) /
+     (x.length * x2 - pow(2)(add(x)))
+}))
+
+regression(
+  [2, 3, 2, 5, 6, 1, 4, 1],
+  [5, 8, 8, 7, 11, 3, 10, 4]
+) // get {a: 3.25, b: 1.25} = $2
