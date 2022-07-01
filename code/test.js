@@ -755,3 +755,30 @@ corelationRank(
   [82, 75, 85, 70, 77, 60, 63, 66, 80, 89],
   [79, 80, 89, 65, 67, 62, 61, 68, 81, 84]
 ) // get 0.866
+
+chi2 = arr => withThis(
+  arr.map(i => i.map((k, l) =>
+    add(i) * add(arr.map(m => m[l]))
+    / add(_.flatten(arr))
+  )), pred => add(_.flatten(pred).map((n, o) =>
+    pow(2)(_.flatten(arr)[o] - n) / n
+  ))
+)
+
+chi2([
+  [145, 58, 8],
+  [77, 13, 27],
+  [21, 32, 19]
+]) // get 65.82
+
+contingency = arrays => pow(1/2)(
+  chi2(arrays) / (chi2(arrays) + add(_.flatten(arrays)))
+)
+
+contingency([
+  [145, 58, 8],
+  [77, 13, 27],
+  [21, 32, 19]
+]) // get 0.3759
+
+/*---------------------------------------------------------------------------------------*/
