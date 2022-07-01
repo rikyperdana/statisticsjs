@@ -788,7 +788,7 @@ contingency([
 
 /*---------------------------------------------------------------------------------------*/
 
-multiLinCol = (y, x1, x2) => withThis(
+multiLinCor = (y, x1, x2) => withThis(
   corelation, cor => pow(1/2)(
     (
       (pow(2)(cor(y, x1)) + pow(2)(cor(y, x2))) -
@@ -797,7 +797,7 @@ multiLinCol = (y, x1, x2) => withThis(
   )
 )
 
-multiLinCol(
+multiLinCor(
   [3, 5, 6, 7, 4, 6, 9],
   [5, 8, 9, 10, 7, 7 , 11],
   [4, 3, 2, 3, 2, 4, 5]
@@ -848,3 +848,13 @@ regression(
   [2, 3, 2, 5, 6, 1, 4, 1],
   [5, 8, 8, 7, 11, 3, 10, 4]
 ) // get {a: 3.25, b: 1.25} = $2
+
+linearPred = (equ, num) =>
+  equ.a + equ.b * num
+
+linearPred(
+  regression(
+    [2, 3, 2, 5, 6, 1, 4, 1],
+    [5, 8, 8, 7, 11, 3, 10, 4]
+  ), 3.5
+) // get 7.625
