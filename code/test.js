@@ -339,12 +339,10 @@ distIQR(distFreq(data)) // get 4.8269
 
 skewMod = array =>
   (mean(array) - mode(array)) /
-  // stanDev(variance(array)),
   stanDev(array)
 
 distSkewMod = dist =>
   (distMean(dist) - distMode(dist)) /
-  // stanDev(distVariance(dist))
   distStanDev(dist)
 
 skewMod(data) // get -0.2558
@@ -354,12 +352,10 @@ distSkewMod(distFreq(data)) // get -0.1846
 
 skewMed = array =>
   (mean(array) - median(array))
-  // * 3 / stanDev(variance(array))
   * 3 / stanDev(array)
 
 distSkewMed = dist =>
   (distMean(dist) - distMedian(dist))
-  // * 3 / stanDev(distVariance(dist))
   * 3 / distStanDev(dist)
 
 skewMed(data) // get 0.0622
@@ -390,7 +386,6 @@ skewMom = array => withAs(
     array.map(i => i - meanVal)
     .map(Math.abs).map(pow(3))
   ) / array.length
-  // / pow(3)(stanDev(variance(array)))
   / pow(3)(stanDev(array))
 )
 
@@ -403,7 +398,6 @@ distSkewMom = dist => withAs(
       midVal(i) - meanVal
     ))
   ) / distLength(dist)
-  // / pow(3)(stanDev(distVariance(dist)))
   / pow(3)(distStanDev(dist))
 )
 
@@ -417,7 +411,6 @@ kurtMom = array => withAs(
     array.map(i => i - meanVal)
     .map(Math.abs).map(pow(4))
   ) / array.length
-  // / pow(4)(stanDev(variance(array)))
   / pow(4)(stanDev(array))
 )
 
@@ -430,7 +423,6 @@ distKurtMom = dist => withAs(
       midVal(i) - meanVal
     ))
   ) / distLength(dist)
-  // / pow(4)(stanDev(distVariance(dist)))
   / pow(4)(distStanDev(dist))
 )
 
@@ -462,7 +454,6 @@ kurtPer(...arr2) // get 0.2413
 /*---------------------------------------------------------------------------------------*/
 
 zConvert = array => withAs(
-  // {m: mean(array), sd: stanDev(variance(array))},
   {m: mean(array), sd: stanDev(array)},
   ({m, sd}) => array.map(i => (i - m) / sd)
 )
@@ -475,11 +466,9 @@ zConvert([5000, 4000, 8000, 7000, 1000]) // get the same result as above
 variation = (a, b) => a / b * 100
 
 variation(
-  // stanDev(variance(data)), mean(data)
   stanDev(data), mean(data)
 ) // result 4.9471899
 variation(
-  // stanDev(distVariance(distFreq(data))),
   distStanDev(distFreq(data)),
   distMean(distFreq(data))
 ) // result 4.9983
@@ -880,8 +869,8 @@ distCorelation = arrays => withAs({
   ))),
   fxux: sum(fx.map((i, j) => i * ux[j])),
   fxux2: sum(fx.map((i, j) => i * pow(2)(ux[j]))),
-  fxuxuy: sum(makeArray(arrays[0].length).map(i => sum(
-    arrays.map((j, k) => j[i] * ux[i] * uy[k])
+  fxuxuy: sum(arrays[0].map((i, j) => sum(
+    arrays.map((k, l) => k[j] * ux[j] * uy[l])
   ))),
 }, ({fyuy, fyuy2, fyuyux, fxux, fxux2, fxuxuy}) =>
   (n * fxuxuy - fxux * fyuy) / pow(1/2)(
