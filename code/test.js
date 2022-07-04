@@ -1,8 +1,7 @@
 var
 withAs = (obj, cb) => cb(obj),
 get = prop => obj => obj[prop],
-add = array => array.reduce((acc, inc) => acc + inc),
-sub = array => array.reduce((acc, inc) => acc - inc),
+sum = array => array.reduce((acc, inc) => acc + inc),
 mul = array => array.reduce((acc, inc) => acc * inc),
 pow = asc => num => Math.pow(num, asc),
 range = array => Math.max(...array) - Math.min(...array),
@@ -23,14 +22,14 @@ assign = (a, b) => Object.assign({}, a, b),
 
 /*---------------------------------------------------------------------------------------*/
 
-mean = array => add(array) / array.length,
+mean = array => sum(array) / array.length,
 ors = array => array.find(Boolean)
 
 median = array => withAs(
   array.sort((a, b) => a - b),
   sorted => ors([
     sorted.length === 1 && sorted[0],
-    sorted.length === 2 && add(sorted) / 2,
+    sorted.length === 2 && sum(sorted) / 2,
   ]) || median(sorted.slice(1, sorted.length - 1))
 )
 
@@ -73,13 +72,13 @@ distFreq(data) // call the function
 
 /*---------------------------------------------------------------------------------------*/
 
-distLength = dist => add(dist.map(get('fre')))
+distLength = dist => sum(dist.map(get('fre')))
 
 /*---------------------------------------------------------------------------------------*/
 
 distRelative = (dist, percent) => dist.map(
   i => Object.assign(i, {
-    rel: i.fre / add(dist.map(get('fre')))
+    rel: i.fre / sum(dist.map(get('fre')))
     * (percent ? 100 : 1)
   })
 )
@@ -110,11 +109,10 @@ distRelative(distFreq(data), true) // with percentage
 
 distCumulative = dist => dist.reduce(
   (acc, inc) => [...acc, Object.assign(inc, {
-    cumA: inc.fre + add([0, ...acc.map(get('fre'))]),
-    cumD: sub([
-      add(dist.map(get('fre'))),
-      add([0, ...acc.map(get('fre'))]),
-    ])
+    cumA: inc.fre + sum([0, ...acc.map(get('fre'))]),
+    cumD:
+      sum(dist.map(get('fre'))) -
+      sum([0, ...acc.map(get('fre'))])
   })],
 [])
 
@@ -131,11 +129,11 @@ distCumulative(distFreq(data)) // call the function
 
 /*---------------------------------------------------------------------------------------*/
 
-distMean = dist => add(dist.map(
+distMean = dist => sum(dist.map(
   i => (i.bot + (
     (i.top - i.bot) / 2
   )) * i.fre
-)) / add(dist.map(get('fre')))
+)) / sum(dist.map(get('fre')))
 
 distMean(distFreq(data)) // result 73.125
 
@@ -272,7 +270,7 @@ distRange = dist =>
 /*---------------------------------------------------------------------------------------*/
 
 devMean = array => withAs(
-  mean(array), meanVal => add(
+  mean(array), meanVal => sum(
     array.map(i => i - meanVal)
          .map(Math.abs)
   ) / array.length
@@ -281,11 +279,11 @@ devMean = array => withAs(
 /*----------------------------------------------------------------*/
 
 distDevMean = dist => withAs(
-  distMean(dist), meanVal => add(
+  distMean(dist), meanVal => sum(
     dist.map(i => i.fre * Math.abs(
       (i.bot + ((i.top - i.bot) / 2)) - meanVal
     ))
-  ) / add(dist.map(get('fre')))
+  ) / sum(dist.map(get('fre')))
 )
 
 distDevMean(distFreq(data)) // get 2.98125
@@ -293,7 +291,7 @@ distDevMean(distFreq(data)) // get 2.98125
 /*---------------------------------------------------------------------------------------*/
 
 variance = array => withAs(
-  mean(array), meanVal => add(
+  mean(array), meanVal => sum(
     array.map(i => i - meanVal)
          .map(pow(2))
   ) / (array.length - (
@@ -306,7 +304,7 @@ variance(data) // get 13.069375
 /*---------------------------------------------------------------------------------------*/
 
 distVariance = dist => withAs(
-  distMean(dist), meanVal => add(
+  distMean(dist), meanVal => sum(
     dist.map(i => i.fre * pow(2)(
       (i.bot + ((i.top - i.bot) / 2)) - meanVal
     ))
@@ -388,7 +386,7 @@ skewBow(
 /*---------------------------------------------------------------------------------------*/
 
 skewMom = array => withAs(
-  mean(array), meanVal => add(
+  mean(array), meanVal => sum(
     array.map(i => i - meanVal)
     .map(Math.abs).map(pow(3))
   ) / array.length
@@ -400,7 +398,7 @@ distSkewMom = dist => withAs(
   {
     meanVal: distMean(dist),
     midVal: i => i.bot + ((i.top - i.bot) / 2)
-  }, ({meanVal, midVal}) => add(
+  }, ({meanVal, midVal}) => sum(
     dist.map(i => i.fre * pow(3)(
       midVal(i) - meanVal
     ))
@@ -415,7 +413,7 @@ distSkewMom(distFreq(data)) // get 0.0013
 /*---------------------------------------------------------------------------------------*/
 
 kurtMom = array => withAs(
-  mean(array), meanVal => add(
+  mean(array), meanVal => sum(
     array.map(i => i - meanVal)
     .map(Math.abs).map(pow(4))
   ) / array.length
@@ -427,7 +425,7 @@ distKurtMom = dist => withAs(
   {
     meanVal: distMean(dist),
     midVal: i => i.bot + ((i.top - i.bot) / 2)
-  }, ({meanVal, midVal}) => add(
+  }, ({meanVal, midVal}) => sum(
     dist.map(i => i.fre * pow(4)(
       midVal(i) - meanVal
     ))
@@ -534,8 +532,8 @@ makeArray(length).map((i, j) => j + 1 - Math.round(length / 2)) : [
 leastSquareEqu = array => withAs(
   middleIndex(array.length), index => ({
   a: mean(array),
-  b: add(array.map((i, j) => i * index[j]))
-    / add(index.map(pow(2)))
+  b: sum(array.map((i, j) => i * index[j]))
+    / sum(index.map(pow(2)))
 }))
 
 leastSquarePred = (array, next) => withAs({
@@ -554,8 +552,8 @@ leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 3
 /*---------------------------------------------------------------------------------------*/
 
 mathTrend = arr => withAs([
-  [add(arr), arr.length, add(arr.map((i, j) => j))],
-  [add(arr.map((i, j) => i*j)), add(arr.map((i, j) => j)), add(arr.map((i, j) => j*j))]
+  [sum(arr), arr.length, sum(arr.map((i, j) => j))],
+  [sum(arr.map((i, j) => i*j)), sum(arr.map((i, j) => j)), sum(arr.map((i, j) => j*j))]
 ], list =>
   withAs(list.sort((a, b) => a[1] - b[1]), sorted =>
     withAs([sorted[0].map(i => i * sorted[1][1] / sorted[0][1]), sorted[1]], equal =>
@@ -586,11 +584,11 @@ mathTrendPred([170, 190, 225, 250, 325], 5) // get [158, 195, 232, 269, 306]
 
 parabolicTrend = array => withAs(
   middleIndex(array.length), index => withAs({
-    sigY: add(array),
-    sigXY: add(index.map((i, j) => array[j] * i)),
-    sigX2Y: add(index.map((i, j) => array[j] * i * i)),
-    sigX2: add(index.map(pow(2))),
-    sigX4: add(index.map(pow(4)))
+    sigY: sum(array),
+    sigXY: sum(index.map((i, j) => array[j] * i)),
+    sigX2Y: sum(index.map((i, j) => array[j] * i * i)),
+    sigX2: sum(index.map(pow(2))),
+    sigX4: sum(index.map(pow(4)))
   }, ({sigY, sigXY, sigX2Y, sigX2, sigX4}) => ({
     a: (sigY*sigX4 - sigX2Y*sigX2) /
        (array.length*sigX4 - pow(2)(sigX2)),
@@ -626,10 +624,10 @@ parabolicTrendPred([12, 16, 19, 21, 22], 5)
 euler = 2.718281828459045
 
 expoTrend = arr => withAs(middleIndex(arr.length), index => ({
-  a: pow(add(arr.map(Math.log)) / arr.length)(euler),
+  a: pow(sum(arr.map(Math.log)) / arr.length)(euler),
   b: pow(
-    add(index.map((i, j) => i * Math.log(arr[j]))) /
-    add(index.map(pow(2)))
+    sum(index.map((i, j) => i * Math.log(arr[j]))) /
+    sum(index.map(pow(2)))
   )(euler) - 1
 }))
 
@@ -639,7 +637,7 @@ expoTrend([9, 13, 18, 25, 30]) // get {a: 17.3661, b: 0.3582}
 
 cycleTrend = arrays => withAs(
   makeArray(arrays[0].length)
-  .map(i => add(arrays.map(j => j[i]))),
+  .map(i => sum(arrays.map(j => j[i]))),
   sums => sums.map(i => i / mean(sums))
 )
 
@@ -654,9 +652,9 @@ cycleTrend([
 
 ratioTrend = arrays => withAs(
   middleIndex(arrays.length), index => ({
-    a: add(arrays.map(add)) / arrays.length,
-    b: add(index.map((i, j) => i * add(arrays[j]))) /
-       add(index.map(pow(2)))
+    a: sum(arrays.map(sum)) / arrays.length,
+    b: sum(index.map((i, j) => i * sum(arrays[j]))) /
+       sum(index.map(pow(2)))
   })
 )
 
@@ -706,7 +704,7 @@ ratioTrendDiff([
 
 ratioTrendSeason = arrays => withAs(ratioTrendDiff(arrays), diff =>
   withAs(makeArray(4).map(i => mean(diff.map(j => j[i]))), averages =>
-    averages.map(i => i * 400 / add(averages))
+    averages.map(i => i * 400 / sum(averages))
   )
 )
 
@@ -720,15 +718,15 @@ ratioTrendSeason([
 /*---------------------------------------------------------------------------------------*/
 
 corelation = (x, y) => (
-  x.length * add(x.map((i, j) => i * y[j])) -
-  add(x) * add(y)
+  x.length * sum(x.map((i, j) => i * y[j])) -
+  sum(x) * sum(y)
 ) / pow(1/2)(
   (
-    x.length * add(x.map(pow(2))) -
-    pow(2)(add(x))
+    x.length * sum(x.map(pow(2))) -
+    pow(2)(sum(x))
   ) * (
-    x.length * add(y.map(pow(2))) -
-    pow(2)(add(y))
+    x.length * sum(y.map(pow(2))) -
+    pow(2)(sum(y))
   )
 )
 
@@ -759,7 +757,7 @@ ranking([79, 80, 89, 65, 67, 62, 61, 68, 81, 84])
 corelationRank = (x, y) => withAs(
   makeArray(x.length).map(i =>
     ranking(x)[i] - ranking(y)[i]
-  ), diff => 1 - (6 * add(diff.map(pow(2)))
+  ), diff => 1 - (6 * sum(diff.map(pow(2)))
     / (pow(3)(x.length) - x.length))
 )
 
@@ -770,9 +768,9 @@ corelationRank(
 
 chi2 = arrays => withAs(
   arrays.map(i => i.map((k, l) =>
-    add(i) * add(arrays.map(m => m[l]))
-    / add(arrays.flat())
-  )), pred => add(pred.flatMap((n, o) =>
+    sum(i) * sum(arrays.map(m => m[l]))
+    / sum(arrays.flat())
+  )), pred => sum(pred.flatMap((n, o) =>
     pow(2)(arrays.flat()[o] - n) / n
   ))
 )
@@ -784,7 +782,7 @@ chi2([
 ]) // get 65.82
 
 contingency = arrays => pow(1/2)(
-  chi2(arrays) / (chi2(arrays) + add(arrays.flat()))
+  chi2(arrays) / (chi2(arrays) + sum(arrays.flat()))
 )
 
 contingency([
@@ -842,13 +840,13 @@ partialCorelation(
 /*---------------------------------------------------------------------------------------*/
 
 regression = (x, y) => withAs({
-  x2: add(x.map(pow(2))),
-  xy: add(x.map((i, j) => i * y[j]))
+  x2: sum(x.map(pow(2))),
+  xy: sum(x.map((i, j) => i * y[j]))
 }, ({x2, xy}) => ({
-  a: (add(y) * x2 - add(x) * xy) /
-     (x.length * x2 - pow(2)(add(x))),
-  b: (x.length * xy - add(x) * add(y)) /
-     (x.length * x2 - pow(2)(add(x)))
+  a: (sum(y) * x2 - sum(x) * xy) /
+     (x.length * x2 - pow(2)(sum(x))),
+  b: (x.length * xy - sum(x) * sum(y)) /
+     (x.length * x2 - pow(2)(sum(x)))
 }))
 
 regression(
@@ -869,20 +867,20 @@ linearPred(
 /*---------------------------------------------------------------------------------------*/
 
 distCorelation = arrays => withAs({
-  n: add(arrays.flat()),
-  fy: arrays.map(add),
-  fx: arrays[0].map((i, j) => add(arrays.map(k => k[j]))),
+  n: sum(arrays.flat()),
+  fy: arrays.map(sum),
+  fx: arrays[0].map((i, j) => sum(arrays.map(k => k[j]))),
   uy: middleIndex(arrays.length).reverse(),
   ux: middleIndex(arrays[0].length)
 }, ({n, fy, fx, uy, ux}) => withAs({
-  fyuy: add(fy.map((i, j) => i * uy[j])),
-  fyuy2: add(fy.map((i, j) => i * pow(2)(uy[j]))),
-  fyuyux: add(arrays.map((i, j) => add(
+  fyuy: sum(fy.map((i, j) => i * uy[j])),
+  fyuy2: sum(fy.map((i, j) => i * pow(2)(uy[j]))),
+  fyuyux: sum(arrays.map((i, j) => sum(
     i.map((k, l) => k * uy[j] * ux[l])
   ))),
-  fxux: add(fx.map((i, j) => i * ux[j])),
-  fxux2: add(fx.map((i, j) => i * pow(2)(ux[j]))),
-  fxuxuy: add(makeArray(arrays[0].length).map(i => add(
+  fxux: sum(fx.map((i, j) => i * ux[j])),
+  fxux2: sum(fx.map((i, j) => i * pow(2)(ux[j]))),
+  fxuxuy: sum(makeArray(arrays[0].length).map(i => sum(
     arrays.map((j, k) => j[i] * ux[i] * uy[k])
   ))),
 }, ({fyuy, fyuy2, fyuyux, fxux, fxux2, fxuxuy}) =>
