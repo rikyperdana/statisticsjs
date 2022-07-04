@@ -858,3 +858,37 @@ linearPred(
     [5, 8, 8, 7, 11, 3, 10, 4]
   ), 3.5
 ) // get 7.625
+
+/*---------------------------------------------------------------------------------------*/
+
+distCorelation = arrays => withThis({
+  n: add(_.flatten(arrays)),
+  fy: arrays.map(add),
+  fx: arrays[0].map((i, j) => add(arrays.map(k => k[j]))),
+  uy: middleIndex(arrays.length).reverse(),
+  ux: middleIndex(arrays[0].length)
+}, ({n, fy, fx, uy, ux}) => withThis({
+  fyuy: add(fy.map((i, j) => i * uy[j])),
+  fyuy2: add(fy.map((i, j) => i * pow(2)(uy[j]))),
+  fyuyux: add(arrays.map((i, j) => add(
+    i.map((k, l) => k * uy[j] * ux[l])
+  ))),
+  fxux: add(fx.map((i, j) => i * ux[j])),
+  fxux2: add(fx.map((i, j) => i * pow(2)(ux[j]))),
+  fxuxuy: add(makeArray(arrays[0].length).map(i => add(
+    arrays.map((j, k) => j[i] * ux[i] * uy[k])
+  ))),
+}, ({fyuy, fyuy2, fyuyux, fxux, fxux2, fxuxuy}) =>
+  (n * fxuxuy - fxux * fyuy) / pow(1/2)(
+    (n * fxux2 - pow(2)(fxux)) * (n * fyuy2 - pow(2)(fyuy))
+  )
+))
+
+distCorelation([
+  [3, 5, 4, 0, 0, 0],
+  [3, 6, 6, 2, 0, 0],
+  [1, 4, 9, 5, 2, 0],
+  [0, 0, 5, 10, 8, 1],
+  [0, 0, 1, 4, 6, 5],
+  [0, 0, 0, 2, 4, 4]
+]) // get -0.7685
