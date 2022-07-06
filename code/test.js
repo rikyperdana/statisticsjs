@@ -33,7 +33,8 @@ median = array => withAs(
   ]) || median(sorted.slice(1, sorted.length - 1))
 )
 
-median([2, 1, 2, 3]) // get: 2
+mean([1, 2, 3]) // get 2
+median([2, 1, 2, 3]) // get 2
 
 /*----------------------------------------------------------------*/
 
@@ -58,10 +59,7 @@ data = [
   70, 75, 71, 70, 70, 70, 75, 76, 77, 67
 ]
 
-distFreq(data) // call the function
-
-/* // get the result
-[
+distFreq(data) /* get [
   {"bot": 65, "top": 67, "fre": 3  },
   {"bot": 68, "top": 70, "fre": 6  },
   {"bot": 71, "top": 73, "fre": 12 },
@@ -74,6 +72,8 @@ distFreq(data) // call the function
 
 distLength = dist => sum(dist.map(get('fre')))
 
+distLength(distFreq(data)) // get 40
+
 /*---------------------------------------------------------------------------------------*/
 
 distRelative = (dist, percent) => dist.map(
@@ -83,9 +83,7 @@ distRelative = (dist, percent) => dist.map(
   })
 )
 
-distRelative(distFreq(data)) // with decimal
-/*  // get the result
-[
+distRelative(distFreq(data)) /* with decimal get [
   {"bot": 65, "top": 67, "fre": 3,  "rel": 0.075 },
   {"bot": 68, "top": 70, "fre": 6,  "rel": 0.15  },
   {"bot": 71, "top": 73, "fre": 12, "rel": 0.3   },
@@ -94,9 +92,7 @@ distRelative(distFreq(data)) // with decimal
   {"bot": 80, "top": 82, "fre": 2,  "rel": 0.05  }
 ]  */
 
-distRelative(distFreq(data), true) // with percentage
-/*  // get the result
-[
+distRelative(distFreq(data), true)/* with percentage get [
   {"bot": 65, "top": 67, "fre": 3,  "rel": 7.5  },
   {"bot": 68, "top": 70, "fre": 6,  "rel": 15   },
   {"bot": 71, "top": 73, "fre": 12, "rel": 30   },
@@ -116,9 +112,7 @@ distCumulative = dist => dist.reduce(
   })],
 [])
 
-distCumulative(distFreq(data)) // call the function
-/* // get the result
-[
+distCumulative(distFreq(data)) /* get [
   {"bot": 65, "top": 67, "fre": 3,  "cumA": 3,  "cumD": 40 },
   {"bot": 68, "top": 70, "fre": 6,  "cumA": 9,  "cumD": 37 },
   {"bot": 71, "top": 73, "fre": 12, "cumA": 21, "cumD": 31 },
@@ -189,11 +183,10 @@ randomize = digits => x => Math.round(
   Math.random() * Math.pow(10, digits)
 )
 
+randomize(2)() // get 17
 randomize(5)() // get 92836
 
-distFreq(makeArray(100).map(randomize(2))) // call this
-/*  // get the result
-[   // shall be abnormally distributed with utmost certainty
+distFreq(makeArray(100).map(randomize(2))) /* get [
   {"bot": 1,  "top": 12, "fre": 10 },
   {"bot": 13, "top": 24, "fre": 5  },
   {"bot": 25, "top": 36, "fre": 17 },
@@ -202,7 +195,7 @@ distFreq(makeArray(100).map(randomize(2))) // call this
   {"bot": 61, "top": 72, "fre": 13 },
   {"bot": 73, "top": 84, "fre": 15 },
   {"bot": 85, "top": 96, "fre": 7  }
-] */
+] shall be abnormally distributed with utmost certainty */
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -271,6 +264,8 @@ distRange = dist =>
   (dist[dist.length - 1].top + 0.5) -
   (dist[0].bot - 0.5)
 
+distRange(distFreq(data)) // get 18
+
 /*---------------------------------------------------------------------------------------*/
 
 devMean = array => withAs(
@@ -328,7 +323,6 @@ distStanDev = dist => pow(1/2)(distVariance(dist))
 
 stanDev(data) // get 3.6151
 distStanDev(distFreq(data)) // get 3.6550
-
 
 /*---------------------------------------------------------------------------------------*/
 
