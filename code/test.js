@@ -540,37 +540,6 @@ leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 3
 
 /*---------------------------------------------------------------------------------------*/
 
-mathTrend = arr => withAs([
-  [sum(arr), arr.length, sum(arr.map((i, j) => j))],
-  [sum(arr.map((i, j) => i*j)), sum(arr.map((i, j) => j)), sum(arr.map((i, j) => j*j))]
-], list =>
-  withAs(list.sort((a, b) => a[1] - b[1]), sorted =>
-    withAs([sorted[0].map(i => i * sorted[1][1] / sorted[0][1]), sorted[1]], equal =>
-      withAs(makeArray(3).map((i, j) => equal[0][j] - equal[1][j]), remainder =>
-        withAs(remainder[0] / remainder[2], bVal =>
-          withAs((sorted[0][0] - sorted[0][2] * bVal) / sorted[0][1], aVal =>
-            ({a: aVal, b: bVal})
-          )
-        )
-      )
-    )
-  )
-)
-
-mathTrendPartial = (array, parts) => mathTrend(array).map(i => i / parts)
-
-mathTrendPred = (array, periods) => withAs(mathTrend(array), formula =>
-  makeArray(periods).map(i => formula[0] + formula[1] * i)
-)
-
-mathTrend([1, 2, 3, 4, 5]) // get {a: 1, b: 1}
-mathTrendPred([1, 2, 3, 4, 5], 10) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-mathTrend([170, 190, 225, 250, 325]) // get {a: 158, b: 37}
-mathTrendPred([170, 190, 225, 250, 325], 5) // get [158, 195, 232, 269, 306]
-
-/*---------------------------------------------------------------------------------------*/
-
 parabolicTrend = array => withAs(
   middleIndex(array.length), index => withAs({
     sigY: sum(array),
@@ -755,6 +724,42 @@ corelationRank(
   [79, 80, 89, 65, 67, 62, 61, 68, 81, 84]
 ) // get 0.866
 
+/*---------------------------------------------------------------------------------------*/
+
+distCorelation = arrays => withAs({
+  n: sum(arrays.flat()),
+  fy: arrays.map(sum),
+  fx: arrays[0].map((i, j) => sum(arrays.map(k => k[j]))),
+  uy: middleIndex(arrays.length).reverse(),
+  ux: middleIndex(arrays[0].length)
+}, ({n, fy, fx, uy, ux}) => withAs({
+  fyuy: sum(fy.map((i, j) => i * uy[j])),
+  fyuy2: sum(fy.map((i, j) => i * pow(2)(uy[j]))),
+  fyuyux: sum(arrays.map((i, j) => sum(
+    i.map((k, l) => k * uy[j] * ux[l])
+  ))),
+  fxux: sum(fx.map((i, j) => i * ux[j])),
+  fxux2: sum(fx.map((i, j) => i * pow(2)(ux[j]))),
+  fxuxuy: sum(arrays[0].map((i, j) => sum(
+    arrays.map((k, l) => k[j] * ux[j] * uy[l])
+  ))),
+}, ({fyuy, fyuy2, fyuyux, fxux, fxux2, fxuxuy}) =>
+  (n * fxuxuy - fxux * fyuy) / pow(1/2)(
+    (n * fxux2 - pow(2)(fxux)) * (n * fyuy2 - pow(2)(fyuy))
+  )
+))
+
+distCorelation([
+  [3, 5, 4, 0, 0, 0],
+  [3, 6, 6, 2, 0, 0],
+  [1, 4, 9, 5, 2, 0],
+  [0, 0, 5, 10, 8, 1],
+  [0, 0, 1, 4, 6, 5],
+  [0, 0, 0, 2, 4, 4]
+]) // get -0.7685
+
+/*---------------------------------------------------------------------------------------*/
+
 chi2 = arrays => withAs(
   arrays.map(i => i.map((k, l) =>
     sum(i) * sum(arrays.map(m => m[l]))
@@ -855,34 +860,38 @@ linearPred(
 
 /*---------------------------------------------------------------------------------------*/
 
-distCorelation = arrays => withAs({
-  n: sum(arrays.flat()),
-  fy: arrays.map(sum),
-  fx: arrays[0].map((i, j) => sum(arrays.map(k => k[j]))),
-  uy: middleIndex(arrays.length).reverse(),
-  ux: middleIndex(arrays[0].length)
-}, ({n, fy, fx, uy, ux}) => withAs({
-  fyuy: sum(fy.map((i, j) => i * uy[j])),
-  fyuy2: sum(fy.map((i, j) => i * pow(2)(uy[j]))),
-  fyuyux: sum(arrays.map((i, j) => sum(
-    i.map((k, l) => k * uy[j] * ux[l])
-  ))),
-  fxux: sum(fx.map((i, j) => i * ux[j])),
-  fxux2: sum(fx.map((i, j) => i * pow(2)(ux[j]))),
-  fxuxuy: sum(arrays[0].map((i, j) => sum(
-    arrays.map((k, l) => k[j] * ux[j] * uy[l])
-  ))),
-}, ({fyuy, fyuy2, fyuyux, fxux, fxux2, fxuxuy}) =>
-  (n * fxuxuy - fxux * fyuy) / pow(1/2)(
-    (n * fxux2 - pow(2)(fxux)) * (n * fyuy2 - pow(2)(fyuy))
-  )
+stdErrEst = (x, y) => withAs({
+  y2: sum(y.map(pow(2))),
+  xy: sum(x.map((i, j) => i * y[j])),
+  reg: regression(x, y)
+}, ({y2, xy, reg}) => pow(1/2)(
+  (y2 - reg.a * sum(y) - reg.b * xy)
+  / (x.length - 2)
 ))
 
-distCorelation([
-  [3, 5, 4, 0, 0, 0],
-  [3, 6, 6, 2, 0, 0],
-  [1, 4, 9, 5, 2, 0],
-  [0, 0, 5, 10, 8, 1],
-  [0, 0, 1, 4, 6, 5],
-  [0, 0, 0, 2, 4, 4]
-]) // get -0.7685
+stdErrEst(
+  [1, 2, 3, 4, 5, 6],
+  [6, 4, 3, 5, 4, 2]
+) // get 1.1588
+
+/*---------------------------------------------------------------------------------------*/
+
+expoRegress = (x, y) => withAs(
+  regression(x.map(Math.log10), y.map(Math.log10)),
+  reg => ({a: pow(reg.a)(10), b: reg.b})
+)
+
+expoRegress(
+  [1, 2, 3, 5, 6, 7, 9, 10],
+  [4, 6, 7, 9, 8, 7, 4, 3]
+) // get {a: 5.8557, b: -0.0264}
+
+expoRegPred = (reg, num) =>
+  reg.a * pow(reg.b)(num)
+
+expoRegPred(
+  expoRegress(
+    [1, 2, 3, 5, 6, 7, 9, 10],
+    [4, 6, 7, 9, 8, 7, 4, 3]
+  ), 4
+) // get 5.6448
