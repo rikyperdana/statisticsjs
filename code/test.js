@@ -33,7 +33,7 @@ median = array => withAs(
   ]) || median(sorted.slice(1, sorted.length - 1))
 )
 
-median([2, 1, 2, 3]) // result: 2
+median([2, 1, 2, 3]) // get: 2
 
 /*----------------------------------------------------------------*/
 
@@ -135,7 +135,7 @@ distMean = dist => sum(dist.map(
   )) * i.fre
 )) / sum(dist.map(get('fre')))
 
-distMean(distFreq(data)) // result 73.125
+distMean(distFreq(data)) // get 73.125
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -152,7 +152,7 @@ distMedian = dist => withAs(
   )
 )
 
-distMedian(distFreq(data)) // result 73.25
+distMedian(distFreq(data)) // get 73.25
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -180,7 +180,7 @@ distMode = dist => withAs(
   ))
 )
 
-mode(data) // result 74
+mode(data) // get 74
 distMode(distFreq(data)) // 73.8
 
 /*---------------------------------------------------------------------------------------*/
@@ -219,7 +219,7 @@ fractile = (parts, nth, array) => withAs(
   )
 )
 
-fractile(4, 1, data) // 1st le is 71
+fractile(4, 1, data) // 1st Quartile is 71
 fractile(10, 3, data) // 3rd Decile is 71.3
 fractile(100, 82, data) // 82nd Percentile is 75.62
 
@@ -258,8 +258,12 @@ meanGeometric([2, 4, 8, 16, 32]) // 8
 meanGrowth = (pt, po, t) =>
   (Math.pow((pt / po), 1 / t) - 1) * 100
 
+meanGrowth(78, 60, 10) // get 2.6583
+
 predictGrowth = (xbar, po, t) =>
   po * Math.pow((1 + (xbar / 100)), t)
+
+predictGrowth(2.6583, 60, 10) // get 77.9995
 
 /*----------------------------------------------------------------*/
 
@@ -275,6 +279,8 @@ devMean = array => withAs(
          .map(Math.abs)
   ) / array.length
 )
+
+devMean([2, 3, 6, 8, 11]) // get 2.8
 
 /*----------------------------------------------------------------*/
 
@@ -467,21 +473,21 @@ variation = (a, b) => a / b * 100
 
 variation(
   stanDev(data), mean(data)
-) // result 4.9471899
+) // get 4.9471899
 variation(
   distStanDev(distFreq(data)),
   distMean(distFreq(data))
-) // result 4.9983
-variation(range(data), mean(data)) // result 23.263
+) // get 4.9983
+variation(range(data), mean(data)) // get 23.263
 variation(
   distRange(distFreq(data)),
   distMean(distFreq(data))
-) // result 24.61538
-variation(iQR(data), median(data)) // result 5.4794
+) // get 24.61538
+variation(iQR(data), median(data)) // get 5.4794
 variation(
   distIQR(distFreq(data)),
   distMedian(distFreq(data))
-) // result 6.58965
+) // get 6.58965
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -495,7 +501,8 @@ semiAvg = array => withAs(
   )
 )
 
-semiAvg([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+semiAvg([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+// get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 semiAvgN = (array, next = 0) => withAs(
   pivots(array)[0], anchor =>
@@ -506,7 +513,8 @@ semiAvgN = (array, next = 0) => withAs(
     )
 )
 
-semiAvgN([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2) // get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+semiAvgN([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2)
+// get [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -535,8 +543,10 @@ leastSquarePred = (array, next) => withAs({
   )
 ])
 
-leastSquareEqu([170, 190, 225, 250, 325]) // get {a: 232, b: 37}
-leastSquarePred([170, 190, 225, 250, 325], 3) // get [158, 195, 232, 269, 306, 343, 380, 417]
+leastSquareEqu([170, 190, 225, 250, 325])
+// get {a: 232, b: 37}
+leastSquarePred([170, 190, 225, 250, 325], 3)
+// get [158, 195, 232, 269, 306, 343, 380, 417]
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -556,7 +566,8 @@ parabolicTrend = array => withAs(
   }))
 )
 
-parabolicTrend([12, 16, 19, 21, 22]) // get {a: 19, b: 2.5, c: -0.5}
+parabolicTrend([12, 16, 19, 21, 22])
+// get {a: 19, b: 2.5, c: -0.5}
 
 parabolicTrendPred = (array, next) => withAs({
   index: middleIndex(array.length),
@@ -591,8 +602,7 @@ expoTrend = arr => withAs(middleIndex(arr.length), index => ({
 
 expoTrend([9, 13, 18, 25, 30]) // get {a: 17.3661, b: 1.3582}
 
-expoTrendPred = (equ, idx) =>
-  equ.a * pow(idx)(equ.b)
+expoTrendPred = (equ, idx) => equ.a * pow(idx)(equ.b)
 
 expoTrendPred(expoTrend([9, 13, 18, 25, 30]), 2) // get 32.0372
 
@@ -630,7 +640,7 @@ ratioTrend([
 
 ratioTrendPred = arrays => withAs(ratioTrend(arrays), trend =>
   chunk(middleIndex(arrays.length * arrays[0].length).map(i =>
-    (trend.a/4) + (trend.b / 16 * i) // split to quartile
+    (trend.a / 4) + (trend.b / 16 * i) // split to quartile
   ), 4)
 )
 
@@ -667,7 +677,7 @@ ratioTrendDiff([
 
 ratioTrendSeason = arrays => withAs(ratioTrendDiff(arrays), diff =>
   withAs(makeArray(4).map(i => mean(diff.map(j => j[i]))), averages =>
-    averages.map(i => i * 400 / sum(averages))
+    averages.map(i => i * 100 * 4 / sum(averages))
   )
 )
 
@@ -750,7 +760,8 @@ distCorelation = arrays => withAs({
   ))),
 }, ({fyuy, fyuy2, fyuyux, fxux, fxux2, fxuxuy}) =>
   (n * fxuxuy - fxux * fyuy) / pow(1/2)(
-    (n * fxux2 - pow(2)(fxux)) * (n * fyuy2 - pow(2)(fyuy))
+    (n * fxux2 - pow(2)(fxux)) *
+    (n * fyuy2 - pow(2)(fyuy))
   )
 ))
 
@@ -831,7 +842,7 @@ partialCorelation(
 ) // get 0.8035
 
 partialCorelation(
-  [5, 8, 9, 10, 7, 7 , 11], // x1
+  [5, 8, 9, 10, 7, 7, 11],  // x1
   [4, 3, 2, 3, 2, 4, 5],    // x2
   [3, 5, 6, 7, 4, 6, 9],    // y
 ) // get -0.7587
