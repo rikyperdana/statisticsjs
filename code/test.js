@@ -586,10 +586,15 @@ expoTrend = arr => withAs(middleIndex(arr.length), index => ({
   b: pow(
     sum(index.map((i, j) => i * Math.log(arr[j]))) /
     sum(index.map(pow(2)))
-  )(euler) - 1
+  )(euler)
 }))
 
-expoTrend([9, 13, 18, 25, 30]) // get {a: 17.3661, b: 0.3582}
+expoTrend([9, 13, 18, 25, 30]) // get {a: 17.3661, b: 1.3582}
+
+expoTrendPred = (equ, idx) =>
+  equ.a * pow(idx)(equ.b)
+
+expoTrendPred(expoTrend([9, 13, 18, 25, 30]), 2) // get 32.0372
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -846,7 +851,7 @@ regression = (x, y) => withAs({
 regression(
   [2, 3, 2, 5, 6, 1, 4, 1],
   [5, 8, 8, 7, 11, 3, 10, 4]
-) // get {a: 3.25, b: 1.25} = $2
+) // get {a: 3.25, b: 1.25}
 
 linearPred = (equ, num) =>
   equ.a + equ.b * num
