@@ -241,11 +241,16 @@ distFractile(100, 50, distFreq(data)) // 50th Percentile is 73.25
 
 /*---------------------------------------------------------------------------------------*/
 
-meanGeometric = array =>
+geoMean = array =>
   pow(1 / array.length)(mul(array))
 
-meanGeometric([2, 4, 8, 16, 32]) // 8
+geoMean([2, 4, 8, 16, 32]) // 8
 
+logMean = arr => pow(
+  sum(arr.map(Math.log10)) / arr.length
+)(10)
+
+logMean([2, 4, 8, 16, 32]) // 8
 /*---------------------------------------------------------------------------------------*/
 
 meanGrowth = (pt, po, t) =>
@@ -257,6 +262,12 @@ predictGrowth = (xbar, po, t) =>
   po * Math.pow((1 + (xbar / 100)), t)
 
 predictGrowth(2.6583, 60, 10) // get 77.9995
+
+/*----------------------------------------------------------------*/
+
+harmonicMean = arr => arr.length / sum(arr.map(i => 1 / i))
+
+harmonicMean([2, 5, 7, 9, 12]) // get 4.82
 
 /*----------------------------------------------------------------*/
 
@@ -381,13 +392,9 @@ skewBow(
 
 /*---------------------------------------------------------------------------------------*/
 
-skewMom = array => withAs(
-  mean(array), meanVal => sum(
-    array.map(i => i - meanVal)
-    .map(Math.abs).map(pow(3))
-  ) / array.length
-  / pow(3)(stanDev(array))
-)
+skewMom = array => sum(
+  (array.map(i => Math.abs(pow(3)(i - mean(array)))))
+) / array.length / pow(3)(stanDev(array))
 
 distSkewMom = dist => withAs(
   {
@@ -406,13 +413,9 @@ distSkewMom(distFreq(data)) // get 0.0013
 
 /*---------------------------------------------------------------------------------------*/
 
-kurtMom = array => withAs(
-  mean(array), meanVal => sum(
-    array.map(i => i - meanVal)
-    .map(Math.abs).map(pow(4))
-  ) / array.length
-  / pow(4)(stanDev(array))
-)
+kurtMom = array => sum(
+  (array.map(i => Math.abs(pow(4)(i - mean(array)))))
+) / array.length / pow(4)(stanDev(array))
 
 distKurtMom = dist => withAs(
   {
@@ -428,6 +431,17 @@ distKurtMom = dist => withAs(
 
 kurtMom(data) // get 3.1558
 distKurtMom(distFreq(data)) // get 2.7454
+
+/*---------------------------------------------------------------------------------------*/
+
+// Moments Relations
+// Variance(pow2) => Skewness(pow3) => Kurtosis(pow4)
+
+moment = (nth, array) => withAs(
+  mean(array), meanVal => sum(
+    (array.map(i => Math.abs(pow(nth)(i - meanVal))))
+  ) / array.length / pow(nth)(stanDev(array))
+)
 
 /*---------------------------------------------------------------------------------------*/
 
@@ -546,22 +560,22 @@ leastSquarePred([170, 190, 225, 250, 325], 3)
 
 parabolicTrend = array => withAs(
   middleIndex(array.length), index => withAs({
-    sigY: sum(array),
-    sigXY: sum(index.map((i, j) => array[j] * i)),
-    sigX2Y: sum(index.map((i, j) => array[j] * i * i)),
-    sigX2: sum(index.map(pow(2))),
-    sigX4: sum(index.map(pow(4)))
-  }, ({sigY, sigXY, sigX2Y, sigX2, sigX4}) => ({
-    a: (sigY*sigX4 - sigX2Y*sigX2) /
-       (array.length*sigX4 - pow(2)(sigX2)),
-    b: sigXY / sigX2,
-    c: (array.length*sigX2Y - sigX2*sigY) /
-       (array.length*sigX4 - pow(2)(sigX2))
+    SY: sum(array),
+    SXY: sum(index.map((i, j) => array[j] * i)),
+    SX2Y: sum(index.map((i, j) => array[j] * i * i)),
+    SX2: sum(index.map(pow(2))),
+    SX4: sum(index.map(pow(4)))
+  }, ({SY, SXY, SX2Y, SX2, SX4}) => ({
+    a: (array.length * SX2Y - SX2 * SY) /
+       (array.length * SX4 - pow(2)(SX2)),
+    b: SXY / SX2,
+    c: (SY * SX4 - SX2Y * SX2) /
+       (array.length * SX4 - pow(2)(SX2))
   }))
 )
 
 parabolicTrend([12, 16, 19, 21, 22])
-// get {a: 19, b: 2.5, c: -0.5}
+// get {a: -0.5, b: 2.5, c: 19}
 
 parabolicTrendPred = (array, next) => withAs({
   index: middleIndex(array.length),
