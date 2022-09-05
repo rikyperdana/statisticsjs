@@ -526,9 +526,9 @@ semiAvgN([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2)
 
 /*---------------------------------------------------------------------------------------*/
 
-isEven = num => num % 2 === 0
+isOdd = num => num % 2
 
-middleIndex = length => !isEven(length) ?
+middleIndex = length => isOdd(length) ?
 makeArray(length).map((i, j) => j + 1 - Math.round(length / 2)) : [
   ...makeArray(length/2).reduce((res, inc) => [-1 + (-2*inc), ...res], []),
   ...makeArray(length/2).reduce((res, inc) => [...res, 1 + (2 * inc)], [])
