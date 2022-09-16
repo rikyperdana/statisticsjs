@@ -788,7 +788,7 @@ chi2 = arrays => withAs(
   arrays.map(i => i.map((k, l) =>
     sum(i) * sum(arrays.map(m => m[l]))
     / sum(arrays.flat())
-  )), pred => sum(pred.flatMap((n, o) =>
+  )), pred => sum(pred.flat().map((n, o) =>
     pow(2)(arrays.flat()[o] - n) / n
   ))
 )
