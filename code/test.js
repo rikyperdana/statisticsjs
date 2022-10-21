@@ -10,7 +10,7 @@ between = (low, middle, high) =>
 classes = array => Math.round(1 + (3.3 * Math.log10(array.length))),
 interval = array => Math.round(range(array) / classes(array)),
 makeArray = num => [...Array(num).keys()], // generate [0, 1, 2, ...num]
-sort = array => array.sort((a, b) => a - b),
+sort = array => [...array].sort((a, b) => a - b),
 
 last = arr => arr.slice(-1)[0],
 chunk = (input, size) =>
@@ -26,10 +26,9 @@ mean = array => sum(array) / array.length,
 ors = array => array.find(Boolean)
 
 median = array => withAs(
-  array.sort((a, b) => a - b),
-  sorted => ors([
+  sort(array), sorted => ors([
     sorted.length === 1 && sorted[0],
-    sorted.length === 2 && sum(sorted) / 2,
+    sorted.length === 2 && mean(sorted),
   ]) || median(sorted.slice(1, sorted.length - 1))
 )
 
