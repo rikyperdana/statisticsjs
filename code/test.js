@@ -560,12 +560,13 @@ leastSquarePred([170, 190, 225, 250, 325], 3)
 
 parabolicTrend = array => withAs(
   middleIndex(array.length), index => withAs({
+    length: array.length,
     SY: sum(array), length: array.length,
     SXY: sum(index.map((i, j) => array[j] * i)),
     SX2Y: sum(index.map((i, j) => array[j] * i * i)),
     SX2: sum(index.map(pow(2))),
-    SX4: sum(index.map(pow(4)))
-  }, ({SY, SXY, SX2Y, SX2, SX4}) => ({
+    SX4: sum(index.map(pow(4))),
+  }, ({length, SY, SXY, SX2Y, SX2, SX4}) => ({
     a: (length * SX2Y - SX2 * SY) /
        (length * SX4 - pow(2)(SX2)),
     b: SXY / SX2,
