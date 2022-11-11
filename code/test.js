@@ -391,9 +391,9 @@ skewBow(
 
 /*---------------------------------------------------------------------------------------*/
 
-skewMom = array => sum(
-  (array.map(i => Math.abs(pow(3)(i - mean(array)))))
-) / array.length / pow(3)(stanDev(array))
+skewMom = array =>
+  sum(array.map(i => pow(3)(i - mean(array)))) /
+  ((array.length - 1) * pow(3)(stanDev(array)))
 
 distSkewMom = dist => withAs(
   {
@@ -407,7 +407,7 @@ distSkewMom = dist => withAs(
   / pow(3)(distStanDev(dist))
 )
 
-skewMom(data) // get 1.6715
+skewMom(data) // get 0.1364
 distSkewMom(distFreq(data)) // get 0.0013
 
 /*---------------------------------------------------------------------------------------*/
@@ -560,11 +560,11 @@ leastSquarePred([170, 190, 225, 250, 325], 3)
 parabolicTrend = array => withAs(
   middleIndex(array.length), index => withAs({
     length: array.length,
-    SY: sum(array), length: array.length,
-    SXY: sum(index.map((i, j) => array[j] * i)),
+    SY  : sum(array), length: array.length,
+    SXY : sum(index.map((i, j) => array[j] * i)),
     SX2Y: sum(index.map((i, j) => array[j] * i * i)),
-    SX2: sum(index.map(pow(2))),
-    SX4: sum(index.map(pow(4))),
+    SX2 : sum(index.map(pow(2))),
+    SX4 : sum(index.map(pow(4))),
   }, ({length, SY, SXY, SX2Y, SX2, SX4}) => ({
     a: (length * SX2Y - SX2 * SY) /
        (length * SX4 - pow(2)(SX2)),
@@ -576,6 +576,7 @@ parabolicTrend = array => withAs(
 
 parabolicTrend([12, 16, 19, 21, 22])
 // get {a: -0.5, b: 2.5, c: 19}
+// equal to -0.5X^2 + 2.5X + 19
 
 parabolicTrendPred = (array, next) => withAs({
   index: middleIndex(array.length),
@@ -595,10 +596,11 @@ parabolicTrendPred = (array, next) => withAs({
 
 parabolicTrendPred([12, 16, 19, 21, 22], 5)
 // get [12, 16, 19, 21, 22, 22, 21, 19, 16, 12]
-
+//     [-----raw data-----|-----predicted-----]
 /*---------------------------------------------------------------------------------------*/
 
 euler = 2.718281828459045
+// the mysterius natural number
 
 expoTrend = arr => withAs(middleIndex(arr.length), index => ({
   a: pow(sum(arr.map(Math.log)) / arr.length)(euler),
