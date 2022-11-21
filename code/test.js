@@ -533,6 +533,11 @@ makeArray(length).map((i, j) => j + 1 - Math.round(length / 2)) : [
   ...makeArray(length/2).reduce((res, inc) => [...res, 1 + (2 * inc)], [])
 ]
 
+console.log([
+  middleIndex(5),
+  middleIndex(6)
+])
+
 leastSquareEqu = array => withAs(
   middleIndex(array.length), index => ({
   a: mean(array),
