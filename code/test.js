@@ -533,11 +533,6 @@ makeArray(length).map((i, j) => j + 1 - Math.round(length / 2)) : [
   ...makeArray(length/2).reduce((res, inc) => [...res, 1 + (2 * inc)], [])
 ]
 
-console.log([
-  middleIndex(5),
-  middleIndex(6)
-])
-
 leastSquareEqu = array => withAs(
   middleIndex(array.length), index => ({
   a: mean(array),
@@ -583,6 +578,10 @@ parabolicTrend([12, 16, 19, 21, 22])
 // get {a: -0.5, b: 2.5, c: 19}
 // equal to -0.5X^2 + 2.5X + 19
 
+parabolicTrend([30, 25, 21, 18, 16])
+// get {a: 0.5, b: -3.5, c: 21}
+// equal to 0.5X^2 - 3.5X + 21
+
 parabolicTrendPred = (array, next) => withAs({
   index: middleIndex(array.length),
   equation: parabolicTrend(array)
@@ -602,6 +601,11 @@ parabolicTrendPred = (array, next) => withAs({
 parabolicTrendPred([12, 16, 19, 21, 22], 5)
 // get [12, 16, 19, 21, 22, 22, 21, 19, 16, 12]
 //     [-----raw data-----|-----predicted-----]
+
+parabolicTrendPred([30, 25, 21, 18, 16], 5)
+// get [30, 25, 21, 18, 16, 15, 15, 16, 18, 21]
+//     [-----raw data-----|-----predicted-----]
+
 /*---------------------------------------------------------------------------------------*/
 
 euler = 2.718281828459045
@@ -615,12 +619,18 @@ expoTrend = arr => withAs(middleIndex(arr.length), index => ({
   )(euler)
 }))
 
-expoTrend([9, 13, 18, 25, 30]) // get {a: 17.3661, b: 1.3582}
+expoTrend([59, 50, 44, 38, 33, 28, 23]) // get {a: 37.52, b: 0.8584}
 
 expoTrendPred = (equ, idx) => equ.a * pow(idx)(equ.b)
 
-expoTrendPred(expoTrend([9, 13, 18, 25, 30]), 2) // get 32.0372
-
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -3) // get 59.32
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -2) // get 50.92
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -1) // get 43.71
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 0) // get 37.52
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 1) // get 32.21
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 2) // get 27.65
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 3) // get  23.74
+expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 100) // get 0.00000883
 /*---------------------------------------------------------------------------------------*/
 
 cycleTrend = arrays => withAs(
