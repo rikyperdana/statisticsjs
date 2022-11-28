@@ -935,3 +935,5 @@ expoRegPred(
     [4, 6, 7, 9, 8, 7, 4, 3]
   ), 4
 ) // get 5.6448
+
+console.log('oke')
