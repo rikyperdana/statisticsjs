@@ -559,7 +559,6 @@ leastSquarePred([170, 190, 225, 250, 325], 3)
 
 parabolicTrend = array => withAs(
   middleIndex(array.length), index => withAs({
-    length: array.length,
     SY  : sum(array), length: array.length,
     SXY : sum(index.map((i, j) => array[j] * i)),
     SX2Y: sum(index.map((i, j) => array[j] * i * i)),
@@ -935,5 +934,3 @@ expoRegPred(
     [4, 6, 7, 9, 8, 7, 4, 3]
   ), 4
 ) // get 5.6448
-
-console.log('oke')
