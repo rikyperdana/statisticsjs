@@ -220,22 +220,20 @@ fractile(100, 82, data) // 82nd Percentile is 75.62
 /*---------------------------------------------------------------------------------------*/
 
 distFractile = (parts, num, dist) => withAs(
-  last(distCum), tail => withAs(
-    distCumulative(dist).find(
-      i => i.cumA >= (num / parts * tail.cumA)
-    ), qClass =>
-      (qClass.bot - 0.5) + (
+  distCumulative(dist), distCum => withAs(
+    last(distCum), tail => withAs(
+      distCum.find(i => i.cumA >= num / parts * tail.cumA)
+      , qClass => (qClass.bot - 0.5) + (
         (
           (num / parts * tail.cumA) -
           (qClass.cumA - qClass.fre)
         ) / qClass.fre
       ) * (qClass.top - qClass.bot + 1)
+    )
   )
 )
 
-console.log(
 distFractile(4, 1, distFreq(data)) // 1st Quartile is 70.75
-)
 distFractile(4, 2, distFreq(data)) // 2nd Quartile is 73.25
 distFractile(10, 5, distFreq(data)) // 5th Decile is 73.25
 distFractile(100, 50, distFreq(data)) // 50th Percentile is 73.25
