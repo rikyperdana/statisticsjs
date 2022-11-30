@@ -899,7 +899,7 @@ linearPred(
 
 /*---------------------------------------------------------------------------------------*/
 
-stdErrEst = (x, y) => withAs({
+SEE = (x, y) => withAs({
   y2: sum(y.map(pow(2))),
   xy: sum(x.map((i, j) => i * y[j])),
   reg: regression(x, y)
@@ -908,12 +908,12 @@ stdErrEst = (x, y) => withAs({
   / (x.length - 2)
 ))
 
-stdErrEst(
+SEE(
   [2, 3, 2, 5, 6, 1, 4, 1],
   [5, 8, 8, 7,11, 3,10, 4]
 ) // get 1.7559
 
-stdErrEst(
+SEE(
   [2, 3, 2, 5, 6, 1, 4, 1],
   [2, 3, 2, 5, 6, 1, 4, 1]
 ) // get 0
