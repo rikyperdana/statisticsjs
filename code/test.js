@@ -214,6 +214,9 @@ fractile = (parts, nth, array) => withAs(
 )
 
 fractile(4, 1, data) // 1st Quartile is 71
+fractile(4, 2, data) // 2nd Quartile is 73
+fractile(4, 3, data) // 3rd Quartile is 75
+
 fractile(10, 3, data) // 3rd Decile is 71.3
 fractile(100, 82, data) // 82nd Percentile is 75.62
 
