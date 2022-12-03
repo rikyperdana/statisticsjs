@@ -938,3 +938,14 @@ expoRegress(
 // equal to Y = a + X^b
 
 expoRegPred({a: 1.6036, b: 1.6785}, 5)
+
+/*---------------------------------------------------------------------------------------*/
+
+populate = (seed, grow, gen) =>
+  makeArray(gen).map(
+    i => Math.pow(seed, (i+1))
+  )
+
+sumAlive = (max, gen) => sum(gens.slice(-max))
+
+populate(2, 2, 2) // get [2, 4]
