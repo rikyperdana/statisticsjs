@@ -928,17 +928,13 @@ expoRegress = (x, y) => withAs(
   reg => ({a: pow(reg.a)(10), b: reg.b})
 )
 
-expoRegress(
-  [1, 2, 3, 5, 6, 7, 9, 10],
-  [4, 6, 7, 9, 8, 7, 4, 3]
-) // get {a: 5.8557, b: -0.0264}
-
 expoRegPred = (reg, num) =>
   reg.a * pow(reg.b)(num)
 
-expoRegPred(
-  expoRegress(
-    [1, 2, 3, 5, 6, 7, 9, 10],
-    [4, 6, 7, 9, 8, 7, 4, 3]
-  ), 4
-) // get 5.6448
+expoRegress(
+  [1, 2, 3,  4,  5],
+  [2, 4, 8, 16, 32]
+) // get {a: 1.6036, b: 1.6785}
+// equal to Y = a + X^b
+
+expoRegPred({a: 1.6036, b: 1.6785}, 5)
