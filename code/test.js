@@ -242,7 +242,6 @@ distFractile(10, 5, distFreq(data)) // 5th Decile is 73.25
 distFractile(100, 50, distFreq(data)) // 50th Percentile is 73.25
 
 /*---------------------------------------------------------------------------------------*/
-
 geoMean = array =>
   pow(1 / array.length)(mul(array))
 
@@ -615,15 +614,15 @@ euler = 2.718281828459045
 
 expoTrend = arr => withAs(middleIndex(arr.length), index => ({
   a: pow(sum(arr.map(Math.log)) / arr.length)(euler),
-  b: pow(
+  b: pow((
     sum(index.map((i, j) => i * Math.log(arr[j]))) /
     sum(index.map(pow(2)))
-  )(euler)
+  ) - 1)(euler)
 }))
 
 expoTrend([59, 50, 44, 38, 33, 28, 23]) // get {a: 37.52, b: 0.8584}
 
-expoTrendPred = (equ, idx) => equ.a * pow(idx)(equ.b)
+expoTrendPred = (equ, idx) => equ.a * pow(idx)(1 + equ.b)
 
 expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -3) // get 59.32
 expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -2) // get 50.92
@@ -937,10 +936,9 @@ expoRegress(
 ) // get {a: 1.6036, b: 1.6785}
 // equal to Y = a + X^b
 
-expoRegPred({a: 1.6036, b: 1.6785}, 5)
+expoRegPred({a: 1.6036, b: 1.6785}, 5) // get 23.9
 
 /*---------------------------------------------------------------------------------------*/
-
 populate = (seed, grow, gen) =>
   makeArray(gen).map(
     i => Math.pow(seed, (i+1))
@@ -949,3 +947,37 @@ populate = (seed, grow, gen) =>
 sumAlive = (max, gen) => sum(gens.slice(-max))
 
 populate(2, 2, 2) // get [2, 4]
+/*---------------------------------------------------------------------------------------*/
+
+elim = arr => arr.slice(-2)[0]
+rmndr = arr => arr.filter(Boolean)
+
+blncr = (eq1, eq2) => withAs(
+  elim(eq1) * elim(eq2), fct => withAs([
+    eq1.map(i => i * fct / elim(eq1)),
+    eq2.map(i => i * fct / elim(eq2))
+  ], bln => makeArray(eq1.length).map(
+    k => bln[0][k] - bln[1][k]
+  ))
+)
+
+eqlzr = (eq1, eq2, eq3) => withAs({
+  eq4: rmndr(blncr(eq1, eq2)),
+  eq5: rmndr(blncr(eq2, eq3))
+}, ({eq4, eq5}) => withAs(
+  rmndr(blncr(eq4, eq5)), eq6 =>
+    withAs(eq6[1] / eq6[0], x =>
+      withAs(-(last(eq5) - eq5[0] * x), y =>
+        withAs(
+          (last(eq1) - (eq1[0] * x + eq1[1] * y))
+          / elim(eq1), z => [x, y, z]
+        )
+      )
+    )
+))
+
+console.log(eqlzr(
+  [5, -2, -4,  3],
+  [3,  3,  2, -3],
+  [-2, 5,  3,  3]
+))
