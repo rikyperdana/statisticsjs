@@ -950,7 +950,10 @@ populate(2, 2, 2) // get [2, 4]
 /*---------------------------------------------------------------------------------------*/
 
 elim = arr => arr.slice(-2)[0]
-rmndr = arr => arr.filter(Boolean)
+rmndr = arr => [
+  ...arr.slice(0, arr.length - 2),
+  last(arr)
+]
 
 blncr = (eq1, eq2) => withAs(
   elim(eq1) * elim(eq2), fct => withAs([
@@ -966,11 +969,10 @@ eqlzr = (eq1, eq2, eq3) => withAs({
   eq5: rmndr(blncr(eq2, eq3))
 }, ({eq4, eq5}) => withAs(
   rmndr(blncr(eq4, eq5)), eq6 =>
-    withAs(eq6[1] / eq6[0], x =>
-      withAs(-(last(eq5) - eq5[0] * x), y =>
-        withAs(
-          (last(eq1) - (eq1[0] * x + eq1[1] * y))
-          / elim(eq1), z => [x, y, z]
+    withAs(eq6[1]/eq6[0], x =>
+      withAs((eq5[2] - eq5[0] * x) / eq5[1], y =>
+        withAs((eq1[3] - eq1[0] * x - eq1[1] * y) / eq1[2]
+          , z => [x, y, z]
         )
       )
     )
@@ -980,4 +982,4 @@ console.log(eqlzr(
   [5, -2, -4,  3],
   [3,  3,  2, -3],
   [-2, 5,  3,  3]
-))
+)) // get [-1, 2, -3]
