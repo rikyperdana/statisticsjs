@@ -950,36 +950,45 @@ populate(2, 2, 2) // get [2, 4]
 /*---------------------------------------------------------------------------------------*/
 
 elim = arr => arr.slice(-2)[0]
-rmndr = arr => [
-  ...arr.slice(0, arr.length - 2),
-  last(arr)
+rmndr = arr => [...arr.slice(0,arr.length-2), last(arr)]
+gcf = (eq1, eq2) => elim(eq1) * elim(eq2)
+mlt = (eq1, eq2) => [
+  eq1.map(i => i * gcf(eq1, eq2) / elim(eq1)),
+  eq2.map(i => i * gcf(eq1, eq2) / elim(eq2))
 ]
 
-blncr = (eq1, eq2) => withAs(
-  elim(eq1) * elim(eq2), fct => withAs([
-    eq1.map(i => i * fct / elim(eq1)),
-    eq2.map(i => i * fct / elim(eq2))
-  ], bln => makeArray(eq1.length).map(
-    k => bln[0][k] - bln[1][k]
-  ))
+diff = (eq1, eq2) => rmndr(
+  makeArray(eq1.length).map(i =>
+    mlt(eq1, eq2)[0][i] -
+    mlt(eq1, eq2)[1][i]
+  )
 )
 
-eqlzr = (eq1, eq2, eq3) => withAs({
-  eq4: rmndr(blncr(eq1, eq2)),
-  eq5: rmndr(blncr(eq2, eq3))
-}, ({eq4, eq5}) => withAs(
-  rmndr(blncr(eq4, eq5)), eq6 =>
-    withAs(eq6[1]/eq6[0], x =>
-      withAs((eq5[2] - eq5[0] * x) / eq5[1], y =>
-        withAs((eq1[3] - eq1[0] * x - eq1[1] * y) / eq1[2]
-          , z => [x, y, z]
-        )
-      )
-    )
-))
+red = mat =>
+  mat.length === 1 ? [] : [
+    diff(mat[0], mat[1]),
+    ...red(mat.slice(1-mat.length))
+  ]
 
-console.log(eqlzr(
-  [5, -2, -4,  3],
-  [3,  3,  2, -3],
-  [-2, 5,  3,  3]
-)) // get [-1, 2, -3]
+sol = mat =>
+  mat[0].length === 2 ?
+  mat[0][1] / mat[0][0]
+  : sol(red(mat))
+
+console.log(
+  sol([
+    [1, 1, 50],
+    [0.1, 0.6, 15]
+  ]),
+  sol([
+    [5,-2,-4, 3],
+    [3, 3, 2,-3],
+    [-2,5, 3, 3],
+  ]),
+  sol([
+    [-1, 5, 7, 9, 67],
+    [-5, 1, 9, 6, 3],
+    [-2, -5, -6, 1, -33],
+    [-1, -7, -4, -5, -64],
+  ]),
+)
