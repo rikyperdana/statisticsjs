@@ -949,15 +949,18 @@ sumAlive = (max, gen) => sum(gens.slice(-max))
 populate(2, 2, 2) // get [2, 4]
 /*---------------------------------------------------------------------------------------*/
 
-elim = arr => arr.slice(-2)[0]
-rmndr = arr => [...arr.slice(0,arr.length-2), last(arr)]
+elim = (arr, n = 0) => arr.slice(-2-n)[0]
+rest = (arr, n = 0) => arr.filter(
+  (i, j) => j !== arr.length - 2 - n
+)
+
 gcf = (eq1, eq2) => elim(eq1) * elim(eq2)
 mlt = (eq1, eq2) => [
   eq1.map(i => i * gcf(eq1, eq2) / elim(eq1)),
   eq2.map(i => i * gcf(eq1, eq2) / elim(eq2))
 ]
 
-diff = (eq1, eq2) => rmndr(
+diff = (eq1, eq2) => rest(
   makeArray(eq1.length).map(i =>
     mlt(eq1, eq2)[0][i] -
     mlt(eq1, eq2)[1][i]
@@ -975,20 +978,26 @@ sol = mat =>
   mat[0][1] / mat[0][0]
   : sol(red(mat))
 
+swap = (arr, n) => [elim(arr, n), ...rest(arr, n)]
+
+fin = mat => makeArray(mat[0].length - 1).map(
+  i => mat.map(j => swap(j, i))
+).map(sol).reverse()
+
 console.log(
-  sol([
+  fin([
     [1, 1, 50],
     [0.1, 0.6, 15]
   ]),
-  sol([
+  fin([
     [5,-2,-4, 3],
     [3, 3, 2,-3],
     [-2,5, 3, 3],
   ]),
-  sol([
-    [-1, 5, 7, 9, 67],
-    [-5, 1, 9, 6, 3],
-    [-2, -5, -6, 1, -33],
-    [-1, -7, -4, -5, -64],
+  fin([
+    [5, 7, 9, -1, 67],
+    [1, 9, 6, -5, 3],
+    [-5, -6, 1, -2, -33],
+    [-7, -4, -5, -1, -64],
   ]),
 )
