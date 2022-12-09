@@ -955,46 +955,48 @@ rest = (arr, n = 0) => arr.filter(
 )
 
 gcf = (eq1, eq2) => elim(eq1) * elim(eq2)
-mlt = (eq1, eq2) => [
+multi = (eq1, eq2) => [
   eq1.map(i => i * gcf(eq1, eq2) / elim(eq1)),
   eq2.map(i => i * gcf(eq1, eq2) / elim(eq2))
 ]
 
 diff = (eq1, eq2) => rest(
   makeArray(eq1.length).map(i =>
-    mlt(eq1, eq2)[0][i] -
-    mlt(eq1, eq2)[1][i]
+    multi(eq1, eq2)[0][i] -
+    multi(eq1, eq2)[1][i]
   )
 )
 
-red = mat =>
+reduce = mat =>
   mat.length === 1 ? [] : [
     diff(mat[0], mat[1]),
-    ...red(mat.slice(1-mat.length))
+    ...reduce(mat.slice(1-mat.length))
   ]
 
-sol = mat =>
+solve = mat =>
   mat[0].length === 2 ?
   mat[0][1] / mat[0][0]
-  : sol(red(mat))
+  : solve(reduce(mat))
 
 swap = (arr, n) => [elim(arr, n), ...rest(arr, n)]
 
-fin = mat => makeArray(mat[0].length - 1).map(
-  i => mat.map(j => swap(j, i))
-).map(sol).reverse()
+answer = mat =>
+  mat.length >= mat[0].length - 1 &&
+  makeArray(mat[0].length - 1).map(
+    i => mat.map(j => swap(j, i))
+  ).map(solve).reverse()
 
 console.log(
-  fin([
+  answer([
     [1, 1, 50],
     [0.1, 0.6, 15]
   ]),
-  fin([
+  answer([
     [5,-2,-4, 3],
     [3, 3, 2,-3],
     [-2,5, 3, 3],
   ]),
-  fin([
+  answer([
     [5, 7, 9, -1, 67],
     [1, 9, 6, -5, 3],
     [-5, -6, 1, -2, -33],
