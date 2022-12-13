@@ -980,26 +980,39 @@ solve = mat =>
 
 swap = (arr, n) => [elim(arr, n), ...rest(arr, n)]
 
-answer = mat =>
+linPro = mat =>
   mat.length >= mat[0].length - 1 &&
   makeArray(mat[0].length - 1).map(
     i => mat.map(j => swap(j, i))
   ).map(solve).reverse()
 
-console.log(
-  answer([
-    [1, 1, 50],
-    [0.1, 0.6, 15]
-  ]),
-  answer([
-    [5,-2,-4, 3],
-    [3, 3, 2,-3],
-    [-2,5, 3, 3],
-  ]),
-  answer([
-    [5, 7, 9, -1, 67],
-    [1, 9, 6, -5, 3],
-    [-5, -6, 1, -2, -33],
-    [-7, -4, -5, -1, -64],
-  ]),
+linPro([
+  [1, 1, 50],
+  [0.1, 0.6, 15]
+]) // get [30, 20]
+
+linPro([
+  [5,-2,-4, 3],
+  [3, 3, 2,-3],
+  [-2,5, 3, 3],
+]) // get [-1, 2, -3]
+
+linPro([
+  [5, 7, 9, -1, 67],
+  [1, 9, 6, -5, 3],
+  [-5, -6, 1, -2, -33],
+  [-7, -4, -5, -1, -64],
+]) // get [3, 1, 6, 9]
+/*---------------------------------------------------------------------------------------*/
+
+troubleMaker = num => withAs(
+  makeArray(num).map(randomize(2)),
+  ranVar => makeArray(num).map(i => withAs(
+    makeArray(num).map(randomize(2)),
+    mlt => [...mlt, sum(
+      mlt.map((j, k) => j * ranVar[k])
+    )]
+  ))
 )
+
+console.log(linPro(troubleMaker(3)))
