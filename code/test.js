@@ -1042,3 +1042,9 @@ parabolRegPred = (equ, x) =>
   equ.a + equ.b * x + equ.c * x * x
 
 parabolRegPred({a: 1.89, b: 2.48, c: -0.24}, 5) // get 8.29
+
+[1, 2, 3, 5, 6, 7, 9, 10].map(
+  i => parabolRegPred({
+    a: 1.89, b: 2.48, c: -0.24
+  }, i)
+) // get [4.13, 5.89, 7.17, 8.29, 8.13, 7.49, 4.77, 2.69]
