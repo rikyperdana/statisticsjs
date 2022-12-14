@@ -1005,7 +1005,7 @@ linPro([
 ]) // get [3, 1, 6, 9]
 /*---------------------------------------------------------------------------------------*/
 
-troubleMaker = num => withAs(
+probMaker = num => withAs(
   makeArray(num).map(randomize(2)),
   ranVar => makeArray(num).map(i => withAs(
     makeArray(num).map(randomize(2)),
@@ -1015,4 +1015,30 @@ troubleMaker = num => withAs(
   ))
 )
 
-console.log(linPro(troubleMaker(3)))
+linPro(probMaker(3)) // get [n, n, n]
+/*---------------------------------------------------------------------------------------*/
+
+powSum = (arr, n) => sum(arr.map(pow(n)))
+
+parabolRegress = (x, y) => withAs(linPro([
+  [
+    x.length, sum(x),
+    powSum(x, 2), sum(y)
+  ], [
+    sum(x), powSum(x, 2), powSum(x, 3),
+    sum(x.map((i, j) => i * y[j]))
+  ], [
+    powSum(x, 2), powSum(x, 3), powSum(x, 4),
+    sum(x.map((i, j) => i * i * y[j]))
+  ]
+]), res => ({a: res[0], b: res[1], c: res[2]}))
+
+parabolRegress(
+  [1, 2, 3, 5, 6, 7, 9, 10],
+  [4, 6, 7, 9, 8, 7, 4, 3]
+) // get {a: 1.89, b: 2.48, c: -0.24}
+
+parabolRegPred = (equ, x) =>
+  equ.a + equ.b * x + equ.c * x * x
+
+parabolRegPred({a: 1.89, b: 2.48, c: -0.24}, 5) // get 8.29
