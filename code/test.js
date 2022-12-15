@@ -1011,7 +1011,7 @@ probMaker = num => withAs(
     makeArray(num).map(randomize(2)),
     mlt => [...mlt, sum(
       mlt.map((j, k) => j * ranVar[k])
-    )]
+    )].map(i => i * Math.random())
   ))
 )
 
@@ -1021,10 +1021,8 @@ linPro(probMaker(3)) // get [n, n, n]
 powSum = (arr, n) => sum(arr.map(pow(n)))
 
 parabolRegress = (x, y) => withAs(linPro([
+  [x.length, sum(x), powSum(x, 2), sum(y)],
   [
-    x.length, sum(x),
-    powSum(x, 2), sum(y)
-  ], [
     sum(x), powSum(x, 2), powSum(x, 3),
     sum(x.map((i, j) => i * y[j]))
   ], [
@@ -1042,9 +1040,3 @@ parabolRegPred = (equ, x) =>
   equ.a + equ.b * x + equ.c * x * x
 
 parabolRegPred({a: 1.89, b: 2.48, c: -0.24}, 5) // get 8.29
-
-[1, 2, 3, 5, 6, 7, 9, 10].map(
-  i => parabolRegPred({
-    a: 1.89, b: 2.48, c: -0.24
-  }, i)
-) // get [4.13, 5.89, 7.17, 8.29, 8.13, 7.49, 4.77, 2.69]
