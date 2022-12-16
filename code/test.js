@@ -4,6 +4,7 @@ get = prop => obj => obj[prop],
 sum = array => array.reduce((acc, inc) => acc + inc),
 mul = array => array.reduce((acc, inc) => acc * inc),
 pow = asc => num => Math.pow(num, asc),
+powSum = (n, arr) => sum(arr.map(pow(n))),
 range = array => Math.max(...array) - Math.min(...array),
 between = (low, middle, high) =>
   (low <= middle) && (middle <= high),
@@ -539,7 +540,7 @@ leastSquareEqu = array => withAs(
   middleIndex(array.length), index => ({
   a: mean(array),
   b: sum(array.map((i, j) => i * index[j]))
-    / sum(index.map(pow(2)))
+    / powSum(2, index)
 }))
 
 leastSquarePred = (array, next) => withAs({
@@ -564,8 +565,8 @@ parabolicTrend = array => withAs(
     SY  : sum(array), length: array.length,
     SXY : sum(index.map((i, j) => array[j] * i)),
     SX2Y: sum(index.map((i, j) => array[j] * i * i)),
-    SX2 : sum(index.map(pow(2))),
-    SX4 : sum(index.map(pow(4))),
+    SX2 : powSum(2, index),
+    SX4 : powSum(4, index)
   }, ({length, SY, SXY, SX2Y, SX2, SX4}) => ({
     a: (length * SX2Y - SX2 * SY) /
        (length * SX4 - pow(2)(SX2)),
@@ -616,7 +617,7 @@ expoTrend = arr => withAs(middleIndex(arr.length), index => ({
   a: pow(sum(arr.map(Math.log)) / arr.length)(euler),
   b: pow((
     sum(index.map((i, j) => i * Math.log(arr[j]))) /
-    sum(index.map(pow(2)))
+    powSum(2, index)
   ) - 1)(euler)
 }))
 
@@ -653,7 +654,7 @@ ratioTrend = arrays => withAs(
   middleIndex(arrays.length), index => ({
     a: sum(arrays.map(sum)) / arrays.length,
     b: sum(index.map((i, j) => i * sum(arrays[j]))) /
-       sum(index.map(pow(2)))
+       powSum(2, index)
   })
 )
 
@@ -720,13 +721,8 @@ corelation = (x, y) => (
   x.length * sum(x.map((i, j) => i * y[j])) -
   sum(x) * sum(y)
 ) / pow(1/2)(
-  (
-    x.length * sum(x.map(pow(2))) -
-    pow(2)(sum(x))
-  ) * (
-    x.length * sum(y.map(pow(2))) -
-    pow(2)(sum(y))
-  )
+  (x.length * powSum(2, x) - pow(2)(sum(x))) *
+  (x.length * powSum(2, y) - pow(2)(sum(y)))
 )
 
 corelation(
@@ -756,7 +752,7 @@ ranking([79, 80, 89, 65, 67, 62, 61, 68, 81, 84])
 corelationRank = (x, y) => withAs(
   makeArray(x.length).map(i =>
     ranking(x)[i] - ranking(y)[i]
-  ), diff => 1 - (6 * sum(diff.map(pow(2)))
+  ), diff => 1 - (6 * powSum(2, diff)
     / (pow(3)(x.length) - x.length))
 )
 
@@ -875,7 +871,7 @@ partialCorelation(
 /*---------------------------------------------------------------------------------------*/
 
 regression = (x, y) => withAs({
-  x2: sum(x.map(pow(2))),
+  x2: powSum(2, x),
   xy: sum(x.map((i, j) => i * y[j]))
 }, ({x2, xy}) => ({
   a: (sum(y) * x2 - sum(x) * xy) /
@@ -902,7 +898,7 @@ linearPred(
 /*---------------------------------------------------------------------------------------*/
 
 SEE = (x, y) => withAs({
-  y2: sum(y.map(pow(2))),
+  y2: powSum(2, y),
   xy: sum(x.map((i, j) => i * y[j])),
   reg: regression(x, y)
 }, ({y2, xy, reg}) => pow(1/2)(
@@ -1018,15 +1014,13 @@ probMaker = num => withAs(
 linPro(probMaker(3)) // get [n, n, n]
 /*---------------------------------------------------------------------------------------*/
 
-powSum = (arr, n) => sum(arr.map(pow(n)))
-
 parabolRegress = (x, y) => withAs(linPro([
-  [x.length, sum(x), powSum(x, 2), sum(y)],
+  [x.length, sum(x), powSum(2, x), sum(y)],
   [
-    sum(x), powSum(x, 2), powSum(x, 3),
+    sum(x), powSum(2, x), powSum(3, x),
     sum(x.map((i, j) => i * y[j]))
   ], [
-    powSum(x, 2), powSum(x, 3), powSum(x, 4),
+    powSum(2, x), powSum(2, x), powSum(2, x),
     sum(x.map((i, j) => i * i * y[j]))
   ]
 ]), res => ({a: res[0], b: res[1], c: res[2]}))
