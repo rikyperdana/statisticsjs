@@ -1005,13 +1005,20 @@ probMaker = num => withAs(
   makeArray(num).map(randomize(2)),
   ranVar => makeArray(num).map(i => withAs(
     makeArray(num).map(randomize(2)),
-    mlt => [...mlt, sum(
-      mlt.map((j, k) => j * ranVar[k])
-    )].map(i => i * Math.random())
+    coef => [...coef, sum(
+      coef.map((j, k) => j * ranVar[k])
+    )]
   ))
 )
 
-linPro(probMaker(3)) // get [n, n, n]
+probMaker(3)
+/* get random matrix [
+  [5,-2,-4, 3],
+  [3, 3, 2,-3],
+  [-2,5, 3, 3],
+] */
+
+linPro(probMaker(3)) // get [-1, 2, -3]
 /*---------------------------------------------------------------------------------------*/
 
 parabolRegress = (x, y) => withAs(linPro([
