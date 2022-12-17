@@ -1018,9 +1018,8 @@ probMaker(3)
   [-2,5, 3, 3],
 ] */
 
-console.log(
-linPro(probMaker(10)) // get [-1, 2, -3]
-)
+linPro(probMaker(3)) // get [-1, 2, -3]
+// ^ now up to 10 variables
 /*---------------------------------------------------------------------------------------*/
 
 parabolRegress = (x, y) => withAs(linPro([
