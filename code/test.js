@@ -971,7 +971,7 @@ reduce = mat =>
 
 solve = mat =>
   mat[0].length === 2 ?
-  mat[0][1] / mat[0][0]
+  Math.round(mat[0][1] / mat[0][0])
   : solve(reduce(mat))
 
 swap = (arr, n) => [elim(arr, n), ...rest(arr, n)]
@@ -1002,9 +1002,9 @@ linPro([
 /*---------------------------------------------------------------------------------------*/
 
 probMaker = num => withAs(
-  makeArray(num).map(randomize(2)),
+  makeArray(num).map(randomize(1)),
   ranVar => makeArray(num).map(i => withAs(
-    makeArray(num).map(randomize(2)),
+    makeArray(num).map(i => Math.random()),
     coef => [...coef, sum(
       coef.map((j, k) => j * ranVar[k])
     )]
@@ -1018,7 +1018,9 @@ probMaker(3)
   [-2,5, 3, 3],
 ] */
 
-linPro(probMaker(3)) // get [-1, 2, -3]
+console.log(
+linPro(probMaker(10)) // get [-1, 2, -3]
+)
 /*---------------------------------------------------------------------------------------*/
 
 parabolRegress = (x, y) => withAs(linPro([
