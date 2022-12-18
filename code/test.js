@@ -623,16 +623,13 @@ expoTrend = arr => withAs(middleIndex(arr.length), index => ({
 
 expoTrend([59, 50, 44, 38, 33, 28, 23]) // get {a: 37.52, b: 0.8584}
 
-expoTrendPred = (equ, idx) => equ.a * pow(idx)(1 + equ.b)
+expoTrendPred = (equ, idx) => equ.a * pow(idx)(equ.b)
 
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -3) // get 59.32
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -2) // get 50.92
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), -1) // get 43.71
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 0) // get 37.52
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 1) // get 32.21
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 2) // get 27.65
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 3) // get  23.74
-expoTrendPred(expoTrend([59, 50, 44, 38, 33, 28, 23]), 100) // get 0.00000883
+middleIndex(7).map(
+	i => expoTrendPred(
+		{a: 37.52, b: 0.8584}, i
+	)
+) // get [59.31, 50.92, 43.7, 37.52, 32.2, 27.64, 23.73]
 /*---------------------------------------------------------------------------------------*/
 
 cycleTrend = arrays => withAs(
