@@ -1039,3 +1039,44 @@ parabolRegPred = (equ, x) =>
   equ.a + equ.b * x + equ.c * x * x
 
 parabolRegPred({a: 1.89, b: 2.48, c: -0.24}, 5) // get 8.29
+/*---------------------------------------------------------------------------------------*/
+
+descPack = (x, y) => ({
+  basic: {
+    length: {x: x.length, y: y.length},
+    min: {x: Math.min(...x), y: Math.min(...y)},
+    max: {x: Math.max(...x), y: Math.max(...y)}
+  },
+  central: {
+    mean: {x: mean(x), y: mean(y)},
+    median: {x: median(x), y: median(y)},
+    mode: {x: mode(x), y: mode(y)},
+  },
+  distribution: {
+    freqDist: {x: distFreq(x), y: distFreq(y)},
+    distRelative: {
+      x: distRelative(distFreq(x)),
+      y: distRelative(distFreq(y))
+    },
+    distCumulative: {
+      x: distCumulative(distFreq(x)),
+      y: distCumulative(distFreq(y))
+    }
+  },
+  dispersion: {
+    devMean: {x: devMean(x), y: devMean(y)},
+    variance: {x: variance(x), y: variance(y)},
+    stanDev: {x: stanDev(x), y: stanDev(y)}
+  },
+  skewness: {
+    skewMod: {x: skewMod(x), y: skewMod(y)},
+    skewMed: {x: skewMed(x), y: skewMed(y)},
+    skewBow: {x: skewBow(x), y: skewBow(y)},
+    skewMom: {x: skewMom(x), y: skewMom(y)}
+  },
+  kurtosis: {
+    kurtMom: {x: kurtMom(x), y: kurtMom(y)},
+    kurtPer: {x: kurtPer(x), y: kurtPer(y)} 
+  },
+  zScores: {x: zConvert(x), y: zConvert(y)} 
+})
