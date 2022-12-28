@@ -1091,3 +1091,13 @@ descPack(
   [1, 2, 3, 4, 5, 6, 7, 8, 9, 11],
   [11, 12, 13, 14, 15, 16, 17, 18, 19, 19]
 ) // get all specified results
+/*---------------------------------------------------------------------------------------*/
+
+trendPack = arr => ({
+  semi_average: semiAvg(arr),
+  least_square: leastSquareEqu(arr),
+  parabolic: parabolicTrend(arr),
+  exponential: expoTrend(arr)
+})
+
+trendPack([1, 2, 3, 4, 5, 6]) // get 4 predictions
