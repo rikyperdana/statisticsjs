@@ -1071,12 +1071,23 @@ descPack = (x, y) => ({
   skewness: {
     skewMod: {x: skewMod(x), y: skewMod(y)},
     skewMed: {x: skewMed(x), y: skewMed(y)},
-    skewBow: {x: skewBow(x), y: skewBow(y)},
-    skewMom: {x: skewMom(x), y: skewMom(y)}
+    skewMom: {x: skewMom(x), y: skewMom(y)},
+    skewBow: {
+      x: skewBow(fractile(4, 1, x), fractile(4, 2, x), fractile(4, 3, x)),
+      y: skewBow(fractile(4, 1, y), fractile(4, 2, y), fractile(4, 3, y))
+    }
   },
   kurtosis: {
     kurtMom: {x: kurtMom(x), y: kurtMom(y)},
-    kurtPer: {x: kurtPer(x), y: kurtPer(y)} 
+    kurtPer: {
+      x: kurtPer(fractile(4, 1, x), fractile(4, 3, x), fractile(100, 10, x), fractile(100, 90, x)),
+      y: kurtPer(fractile(4, 1, y), fractile(4, 3, y), fractile(100, 10, y), fractile(100, 90, y))
+    }
   },
   zScores: {x: zConvert(x), y: zConvert(y)} 
 })
+
+descPack(
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 11],
+  [11, 12, 13, 14, 15, 16, 17, 18, 19, 19]
+) // get all specified results
