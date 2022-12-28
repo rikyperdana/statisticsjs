@@ -1041,56 +1041,52 @@ parabolRegPred = (equ, x) =>
 parabolRegPred({a: 1.89, b: 2.48, c: -0.24}, 5) // get 8.29
 /*---------------------------------------------------------------------------------------*/
 
-descPack = (x, y) => ({
+descPack = arr => ({
   basic: {
-    length: {x: x.length, y: y.length},
-    min: {x: Math.min(...x), y: Math.min(...y)},
-    max: {x: Math.max(...x), y: Math.max(...y)}
+    length: arr.length,
+    min: Math.min(...arr), max: Math.max(...arr),
+    range: Math.max(...arr) - Math.min(...arr)
   },
   central: {
-    mean: {x: mean(x), y: mean(y)},
-    median: {x: median(x), y: median(y)},
-    mode: {x: mode(x), y: mode(y)},
+    mean: mean(arr), mode: mode(arr),
+    median: median(arr),
+    geometric: geoMean(arr),
+    harmonic: harmonicMean(arr)
   },
   distribution: {
-    freqDist: {x: distFreq(x), y: distFreq(y)},
-    distRelative: {
-      x: distRelative(distFreq(x)),
-      y: distRelative(distFreq(y))
-    },
-    distCumulative: {
-      x: distCumulative(distFreq(x)),
-      y: distCumulative(distFreq(y))
-    }
+    frequency: distFreq(arr),
+    relative: distRelative(distFreq(arr)),
+    cumulative: distCumulative(distFreq(arr))
   },
   dispersion: {
-    devMean: {x: devMean(x), y: devMean(y)},
-    variance: {x: variance(x), y: variance(y)},
-    stanDev: {x: stanDev(x), y: stanDev(y)}
+    deviation_mean: devMean(arr),
+    variance: variance(arr),
+    standard_deviation: stanDev(arr)
   },
   skewness: {
-    skewMod: {x: skewMod(x), y: skewMod(y)},
-    skewMed: {x: skewMed(x), y: skewMed(y)},
-    skewMom: {x: skewMom(x), y: skewMom(y)},
-    skewBow: {
-      x: skewBow(fractile(4, 1, x), fractile(4, 2, x), fractile(4, 3, x)),
-      y: skewBow(fractile(4, 1, y), fractile(4, 2, y), fractile(4, 3, y))
-    }
+    mode: skewMod(arr),
+    median: skewMed(arr),
+    moment: skewMom(arr),
+    bowley: skewBow(
+      fractile(4, 1, arr),
+      fractile(4, 2, arr),
+      fractile(4, 3, arr)
+    )
   },
   kurtosis: {
-    kurtMom: {x: kurtMom(x), y: kurtMom(y)},
-    kurtPer: {
-      x: kurtPer(fractile(4, 1, x), fractile(4, 3, x), fractile(100, 10, x), fractile(100, 90, x)),
-      y: kurtPer(fractile(4, 1, y), fractile(4, 3, y), fractile(100, 10, y), fractile(100, 90, y))
-    }
+    moment: kurtMom(arr),
+    percentile: kurtPer(
+      fractile(4, 1, arr),
+      fractile(4, 3, arr),
+      fractile(100, 10, arr),
+      fractile(100, 90, arr)
+    )
   },
-  zScores: {x: zConvert(x), y: zConvert(y)} 
+  z_scores: zConvert(arr)
 })
 
-descPack(
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 11],
-  [11, 12, 13, 14, 15, 16, 17, 18, 19, 19]
-) // get all specified results
+descPack([1, 2, 3, 4, 5, 6, 7, 8, 9, 11])
+// get all specified results
 /*---------------------------------------------------------------------------------------*/
 
 trendPack = arr => ({
