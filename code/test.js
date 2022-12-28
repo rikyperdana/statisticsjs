@@ -1082,18 +1082,15 @@ descPack = arr => ({
       fractile(100, 90, arr)
     )
   },
-  z_scores: zConvert(arr)
+  z_scores: zConvert(arr),
+  trend: {
+    semi_average: semiAvg(arr),
+    least_square: leastSquareEqu(arr),
+    parabolic: parabolicTrend(arr),
+    exponential: expoTrend(arr)
+  }
 })
 
 descPack([1, 2, 3, 4, 5, 6, 7, 8, 9, 11])
 // get all specified results
 /*---------------------------------------------------------------------------------------*/
-
-trendPack = arr => ({
-  semi_average: semiAvg(arr),
-  least_square: leastSquareEqu(arr),
-  parabolic: parabolicTrend(arr),
-  exponential: expoTrend(arr)
-})
-
-trendPack([1, 2, 3, 4, 5, 6]) // get 4 predictions
