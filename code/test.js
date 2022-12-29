@@ -1094,3 +1094,21 @@ descPack = arr => ({
 descPack([1, 2, 3, 4, 5, 6, 7, 8, 9, 11])
 // get all specified results
 /*---------------------------------------------------------------------------------------*/
+
+regressPack = (x, y) => ({
+  corelation: {
+    pearson: corelation(x, y),
+    spearman: corelationRank(x, y)
+  },
+  regression: {
+    SEE: SEE(x, y),
+    linear: regression(x, y),
+    exponential: expoRegress(x, y),
+    parabolic: parabolRegress(x, y)
+  }
+})
+
+regressPack(
+  [1, 2, 3, 4, 5],
+  [2, 3, 4, 5, 7]
+) // get all specified results
