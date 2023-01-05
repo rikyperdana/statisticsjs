@@ -28,3 +28,8 @@ permutation = (n, r) =>
   factorial(n) / factorial(n - r)
 
 permutation(6, 4) // get 360
+
+combination = (n, r) => factorial(n) / (
+  factorial(r) * factorial(n - r)
+)
+combination(6, 4) // get 15
