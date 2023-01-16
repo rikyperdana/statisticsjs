@@ -1038,3 +1038,76 @@ parabolRegPred = (equ, x) =>
   equ.a + equ.b * x + equ.c * x * x
 
 parabolRegPred({a: 1.89, b: 2.48, c: -0.24}, 5) // get 8.29
+/*---------------------------------------------------------------------------------------*/
+
+descPack = arr => ({
+  basic: {
+    length: arr.length,
+    min: Math.min(...arr), max: Math.max(...arr),
+    range: Math.max(...arr) - Math.min(...arr)
+  },
+  central: {
+    mean: mean(arr), mode: mode(arr),
+    median: median(arr),
+    geometric: geoMean(arr),
+    harmonic: harmonicMean(arr)
+  },
+  distribution: {
+    frequency: distFreq(arr),
+    relative: distRelative(distFreq(arr)),
+    cumulative: distCumulative(distFreq(arr))
+  },
+  dispersion: {
+    deviation_mean: devMean(arr),
+    variance: variance(arr),
+    standard_deviation: stanDev(arr)
+  },
+  skewness: {
+    mode: skewMod(arr),
+    median: skewMed(arr),
+    moment: skewMom(arr),
+    bowley: skewBow(
+      fractile(4, 1, arr),
+      fractile(4, 2, arr),
+      fractile(4, 3, arr)
+    )
+  },
+  kurtosis: {
+    moment: kurtMom(arr),
+    percentile: kurtPer(
+      fractile(4, 1, arr),
+      fractile(4, 3, arr),
+      fractile(100, 10, arr),
+      fractile(100, 90, arr)
+    )
+  },
+  z_scores: zConvert(arr),
+  trend: {
+    semi_average: semiAvg(arr),
+    least_square: leastSquareEqu(arr),
+    parabolic: parabolicTrend(arr),
+    exponential: expoTrend(arr)
+  }
+})
+
+descPack([1, 2, 3, 4, 5, 6, 7, 8, 9, 11])
+// get all specified results
+/*---------------------------------------------------------------------------------------*/
+
+regressPack = (x, y) => ({
+  corelation: {
+    pearson: corelation(x, y),
+    spearman: corelationRank(x, y)
+  },
+  regression: {
+    SEE: SEE(x, y),
+    linear: regression(x, y),
+    exponential: expoRegress(x, y),
+    parabolic: parabolRegress(x, y)
+  }
+})
+
+regressPack(
+  [1, 2, 3, 4, 5],
+  [2, 3, 4, 5, 7]
+) // get all specified results
