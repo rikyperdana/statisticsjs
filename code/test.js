@@ -12,7 +12,6 @@ classes = array => Math.round(1 + (3.3 * Math.log10(array.length))),
 interval = array => Math.round(range(array) / classes(array)),
 makeArray = num => [...Array(num).keys()], // generate [0, 1, 2, ...num]
 sort = array => [...array].sort((a, b) => a - b),
-
 last = arr => arr.slice(-1)[0],
 chunk = (input, size) =>
   input.reduce((res, inc) =>
@@ -163,16 +162,16 @@ mode = array => +Object.entries(array.reduce(
 distMode = dist => withAs(
   dist.reduce((acc, inc) =>
     inc.fre > acc.fre ? inc : acc
-  ), mostFre => withAs({
-    prev: dist.find(i => i.top === mostFre.bot - 1),
-    next: dist.find(i => i.bot === mostFre.top + 1)
+  ), most => withAs({
+    prev: dist.find(i => i.top === most.bot - 1),
+    next: dist.find(i => i.bot === most.top + 1)
   }, ({prev, next}) => (
-    (mostFre.bot - 0.5) + (
-      (mostFre.fre - prev.fre) / (
-        (mostFre.fre - prev.fre) +
-        (mostFre.fre - next.fre)
+    (most.bot - 0.5) + (
+      (most.fre - prev.fre) / (
+        (most.fre - prev.fre) +
+        (most.fre - next.fre)
       )
-    ) * (mostFre.top - mostFre.bot + 1)
+    ) * (most.top - most.bot + 1)
   ))
 )
 
@@ -626,9 +625,9 @@ expoTrend([59, 50, 44, 38, 33, 28, 23]) // get {a: 37.52, b: 0.8584}
 expoTrendPred = (equ, idx) => equ.a * pow(idx)(equ.b)
 
 middleIndex(7).map(
-	i => expoTrendPred(
-		{a: 37.52, b: 0.8584}, i
-	)
+  i => expoTrendPred(
+    {a: 37.52, b: 0.8584}, i
+  )
 ) // get [59.31, 50.92, 43.7, 37.52, 32.2, 27.64, 23.73]
 /*---------------------------------------------------------------------------------------*/
 
